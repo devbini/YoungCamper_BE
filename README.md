@@ -1,7 +1,10 @@
-# 🙏🏻 Young-Camper 백엔드 README  
-- 배포 URL : http://youngcamp.co.kr/ / https://youngcamp.co.kr
-- 작업 환경 : Spring-Boot v3.3.2 (Java 17, Gradle)
-- 서버 인프라 : AWS EC2, NginX
+# 🙏🏻 Young-Camper 백엔드 README
+- **Deployment URL** : http://youngcamp.co.kr/
+- **Language** : Java 17
+- **Library & Framework** : Spring Boot 3.3.2, Gradle
+- **Database** : PostgreSQL
+- **Deploy**: AWS (EC2, S3, RDS), Nginx
+- **CI/CD** : Jenkins, Docker
 
 ## 📌 Commit Convention (커밋 메시지 규칙)
 > 📌 **한 커밋에는 한가지 이슈만** 담을 것  
