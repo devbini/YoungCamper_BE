@@ -6,6 +6,9 @@
 - **Deploy**: AWS (EC2, S3, RDS), Nginx
 - **CI/CD** : Jenkins, Docker
 
+## 🛠 프로젝트 아키텍쳐
+![image](https://github.com/user-attachments/assets/fabf7790-df02-48bc-ba06-df1d5b0acc0f)
+
 ## 📌 Commit Convention (커밋 메시지 규칙)
 > 📌 **한 커밋에는 한가지 이슈만** 담을 것  
 > 📌 가능한 **본문**을 포함할 것.
