@@ -42,10 +42,11 @@
 - PR 종료는 최소 1명 이상의 리뷰어가 승인 한 경우에만 가능하도록 합니다.
 
 ## 💿 환경 설정
-- DB 연결 또는 AWS 계정 관련 민감한 정보는 Git에 올리면 안됨.
+- DB 연결 또는 AWS 계정 관련 민감한 정보는 Git에 올리면 안됩니다.
 - resource 아래 application 파일이 add 되지 않도록 조심해주세요.
-- ### 실수로 민감 데이터가 올라간 경우
-    - **먼저 팀 채팅방에 내용 전파부터 해 주세요.**
-    - Git-Filter를 이용해서 지워주시면 됩니다.
-    - 구문 : `git filter-branch -f --index-filter "git rm --cached --ignore-unmatch <경로>/<파일명>" --prune-empty -- --all`
-    - 그 다음 git push --force --all 로 업데이트 해 주세요.
+<br>-> ignore가 되어있지만 그래도 혹시 모르니...
+### 실수로 민감한 데이터가 올라간 경우
+- **먼저 팀 채팅방에 내용 전파부터 해 주세요.**
+- Git-Filter를 이용해서 지워주시면 됩니다.
+- 구문 : `git filter-branch -f --index-filter "git rm --cached --ignore-unmatch <경로>/<파일명>" --prune-empty -- --all`
+- 그 다음 `git push --force --all` 로 업데이트 해 주세요.
