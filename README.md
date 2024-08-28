@@ -41,10 +41,11 @@
     - **feature** 브랜치는 기능 단위로 사용하고 merge 후 각 브랜치를 삭제합니다.
 - PR 종료는 최소 1명 이상의 리뷰어가 승인 한 경우에만 가능하도록 합니다.
 
-## ⚒ 레이어 구조
-| 패키지명 | 설명 |
-| :-: | :- |
-| config | CORS, CSRF 등 설정 파일이 포함됩니다. |
-| controller | 클라이언트 요청을 받고, 결과를 반환합니다. |
-| service | 데이터 처리 및 주요 로직을 구성합니다. |
-| dto | 데이터 전송 또는 변환을 위한 객체가 구성됩니다. |
+## 💿 환경 설정
+- DB 연결 또는 AWS 계정 관련 민감한 정보는 Git에 올리면 안됨.
+- resource 아래 application 파일이 add 되지 않도록 조심해주세요.
+- ### 실수로 민감 데이터가 올라간 경우
+    - **먼저 팀 채팅방에 내용 전파부터 해 주세요.**
+    - Git-Filter를 이용해서 지워주시면 됩니다.
+    - 구문 : `git filter-branch -f --index-filter "git rm --cached --ignore-unmatch <경로>/<파일명>" --prune-empty -- --all`
+    - 그 다음 git push --force --all 로 업데이트 해 주세요.
