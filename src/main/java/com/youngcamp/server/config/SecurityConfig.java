@@ -51,7 +51,9 @@ public class SecurityConfig {
             formLogin ->
                 formLogin.loginPage("/api/login").loginProcessingUrl("/api/login").permitAll())
         .httpBasic(withDefaults())
-        .sessionManagement(sessionManagement -> sessionManagement.maximumSessions(1));
+        .sessionManagement(
+            sessionManagement ->
+                sessionManagement.maximumSessions(1).maxSessionsPreventsLogin(false));
 
     return http.build();
   }
