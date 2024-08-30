@@ -25,7 +25,7 @@ public class SessionService {
     Authentication authResult = authenticationManager.authenticate(authentication);
 
     if (authResult.isAuthenticated()) {
-      // 인증처리
+      // 인증 처리
       SecurityContextHolder.getContext().setAuthentication(authResult);
       HttpSession session = request.getSession(true);
       return session.getId();
