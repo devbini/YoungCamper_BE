@@ -1,5 +1,8 @@
 package com.youngcamp.server.dto;
 
+import com.youngcamp.server.validation.ImageUrlPrefix;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -34,17 +37,28 @@ public class ReviewDTO {
   @Getter
   @Setter
   public static class PostReviewRequest {
+
+    @Size(min = 4, max = 8)
     private String password;
+
+    @NotBlank(message = "Content cannot be blank")
+    @Size(min = 10)
     private String content;
-    private List<String> imageUrls;
+
+    @ImageUrlPrefix private List<String> imageUrls;
   }
 
   @Getter
   @Setter
   public static class UpdateReviewRequest {
+    @Size(min = 4, max = 8)
     private String password;
+
+    @NotBlank(message = "Content cannot be blank")
+    @Size(min = 10)
     private String content;
-    private List<String> imageUrls;
+
+    @ImageUrlPrefix private List<String> imageUrls;
   }
 
   @Getter

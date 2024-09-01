@@ -9,6 +9,7 @@ import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,8 @@ public class ReviewController {
   @PostMapping
   @Operation(summary = "리뷰 등록", description = "새 리뷰를 등록합니다.")
   public SuccessResponse<ReviewDTO.Review> createReview(
-      @RequestBody @Parameter(description = "등록할 리뷰의 정보") ReviewDTO.PostReviewRequest review) {
+      @RequestBody @Valid @Parameter(description = "등록할 리뷰의 정보")
+          ReviewDTO.PostReviewRequest review) {
     Review savedReview = reviewService.createReview(review);
     ReviewDTO.Review reviewDTO = ReviewHelper.toDto(savedReview);
     return new SuccessResponse<>("리뷰 등록 성공", reviewDTO);
@@ -59,7 +61,8 @@ public class ReviewController {
   @Operation(summary = "리뷰 수정", description = "특정 ID의 리뷰를 수정합니다.")
   public SuccessResponse<ReviewDTO.Review> updateReview(
       @Parameter(description = "수정할 리뷰의 ID") @PathVariable UUID id,
-      @RequestBody @Parameter(description = "수정할 리뷰의 정보") ReviewDTO.UpdateReviewRequest review) {
+      @RequestBody @Valid @Parameter(description = "수정할 리뷰의 정보")
+          ReviewDTO.UpdateReviewRequest review) {
     Review reviewDetails = new Review();
     reviewDetails.setPassword(review.getPassword());
     reviewDetails.setContent(review.getContent());
