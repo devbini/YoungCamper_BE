@@ -2,11 +2,15 @@ package com.youngcamp.server.service;
 
 import com.youngcamp.server.domain.Review;
 import com.youngcamp.server.dto.ReviewDTO;
+import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.repository.ReviewRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,24 +45,25 @@ public class ReviewService {
     return reviewRepository.save(review);
   }
 
-  public Review updateReview(UUID id, Review reviewDetails, String password) {
+  public Review updateReview(UUID id, Review reviewDetails) {
+    String password = reviewDetails.getPassword();
     return reviewRepository
         .findById(id)
         .map(
             review -> {
-              if (passwordEncoder.matches(password, review.getPassword())) { // 비밀번호 대조
+              if (passwordEncoder.matches(password, review.getPassword())) {
                 review.setContent(reviewDetails.getContent());
-                if (!reviewDetails.getPassword().isEmpty()) { // 비밀번호가 제공된 경우에만 업데이트
+                if (!password.isEmpty()) {
                   review.setPassword(passwordEncoder.encode(reviewDetails.getPassword()));
                 }
                 review.setImageUrls(reviewDetails.getImageUrls());
                 review.setUpdatedAt(LocalDateTime.now());
                 return reviewRepository.save(review);
               } else {
-                throw new IllegalArgumentException("Incorrect password");
+                throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
               }
             })
-        .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+        .orElseThrow(() -> new NotFoundException("id", id, "존재하지 않는 리뷰입니다."));
   }
 
   public void deleteReview(UUID id, String password) {
@@ -73,8 +78,17 @@ public class ReviewService {
               }
             },
             () -> {
-              throw new IllegalArgumentException("Review not found");
+              throw new NotFoundException("review", id, "존재하지 않는 리뷰입니다.");
             });
+  }
+
+  @Transactional
+  public void deleteManyReviews(List<UUID> ids) {
+    List<Review> reviews = reviewRepository.findAllById(ids);
+    if (reviews.isEmpty()) {
+      throw new NotFoundException("reviews", ids, "존재하지 않는 리뷰가 포함되어 있습니다.");
+    }
+    reviewRepository.deleteAll(reviews);
   }
 
   public static Integer getNextSequenceValue() {
