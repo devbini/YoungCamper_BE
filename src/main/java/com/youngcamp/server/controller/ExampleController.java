@@ -38,9 +38,8 @@ public class ExampleController {
 
   @Autowired private AdminChecker adminChecker;
 
-  @GetMapping("/api/example/admincheck")
-  public String AdminCheckControl() {
-    if (adminChecker.isAdmin()) return "1";
-    else return "0";
+  @GetMapping("/api/admincheck")
+  public Boolean AdminCheckControl() {
+    return adminChecker.isAdmin();
   }
 }
