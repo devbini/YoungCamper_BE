@@ -3,10 +3,10 @@ package com.youngcamp.server.exception;
 public class NotFoundException extends RuntimeException {
 
   private final String resourceType;
-  private final String resourceId;
+  private final Object resourceId;
 
   // 생성자: 자원 타입과 ID를 추가로 받음
-  public NotFoundException(String resourceType, String resourceId, String message) {
+  public NotFoundException(String resourceType, Object resourceId, String message) {
     super(message);
     this.resourceType = resourceType;
     this.resourceId = resourceId;
@@ -16,7 +16,7 @@ public class NotFoundException extends RuntimeException {
     return resourceType;
   }
 
-  public String getResourceId() {
+  public Object getResourceId() {
     return resourceId;
   }
 }
