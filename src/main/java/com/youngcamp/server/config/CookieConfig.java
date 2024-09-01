@@ -9,18 +9,18 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @Configuration
 public class CookieConfig {
 
-    @Bean
-    public HttpSessionIdResolver httpSessionIdResolver() {
-        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
-        DefaultCookieSerializer Serializer = new DefaultCookieSerializer();
+  @Bean
+  public HttpSessionIdResolver httpSessionIdResolver() {
+    CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
+    DefaultCookieSerializer Serializer = new DefaultCookieSerializer();
 
-        Serializer.setCookieName("ADMINID");
-        Serializer.setCookiePath("/");
-        Serializer.setCookieMaxAge(600);
-        Serializer.setUseHttpOnlyCookie(true);
-        Serializer.setSameSite("Lax");
+    Serializer.setCookieName("ADMINID");
+    Serializer.setCookiePath("/");
+    Serializer.setCookieMaxAge(600);
+    Serializer.setUseHttpOnlyCookie(true);
+    Serializer.setSameSite("Lax");
 
-        resolver.setCookieSerializer(Serializer);
-        return resolver;
-    }
+    resolver.setCookieSerializer(Serializer);
+    return resolver;
+  }
 }
