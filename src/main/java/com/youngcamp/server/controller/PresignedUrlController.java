@@ -75,9 +75,9 @@ public class PresignedUrlController {
     Bucket bucket = getBucketForClient(clientIp);
 
     if (bucket.tryConsume(1)) {
-      String presignedUrl = presignedUrlService.generatePresignedUrl(key);
+      PresignedUrlResponseDTO presignedUrlDTO = presignedUrlService.generatePresignedUrl(key);
       return new SuccessResponse<>(
-          "Presigned URL successfully generated.", new PresignedUrlResponseDTO(presignedUrl));
+          "Presigned URL successfully generated.", presignedUrlDTO);
     } else {
       throw new TooManyRequestsException("Too many requests");
     }
