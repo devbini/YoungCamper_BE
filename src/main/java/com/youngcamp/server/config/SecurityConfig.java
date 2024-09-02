@@ -41,12 +41,22 @@ public class SecurityConfig {
                 authorize
                     .requestMatchers("/api/swagger-ui/**", "/v3/api-docs/**")
                     .hasRole("DEV")
+                    .requestMatchers("/api/admin/login")
+                    .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN")
                     .anyRequest()
                     .permitAll())
         .formLogin(
             formLogin ->
                 formLogin.loginPage("/api/login").loginProcessingUrl("/api/login").permitAll())
-        .httpBasic(withDefaults());
+        .httpBasic(withDefaults())
+        .sessionManagement(
+            sessionManagement -> {
+              sessionManagement.maximumSessions(1).maxSessionsPreventsLogin(false);
+              sessionManagement.sessionFixation().newSession();
+              sessionManagement.invalidSessionUrl("/");
+            });
 
     return http.build();
   }
