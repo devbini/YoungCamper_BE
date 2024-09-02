@@ -25,12 +25,15 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'software.amazon.awssdk:s3:2.17.217'
+    implementation 'com.bucket4j:bucket4j-core:8.3.0'
     implementation 'org.springframework.session:spring-session-core'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'software.amazon.awssdk:s3:2.17.217'
 }
 
 tasks.named('test') {

@@ -61,8 +61,7 @@ public class GlobalExceptionHandler {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = UnauthorizedErrorResponse.class)))
-  public ResponseEntity<UnauthorizedErrorResponse> handleBadCredentialsException(
-      BadCredentialsException ex) {
+  public ResponseEntity<UnauthorizedErrorResponse> handleBadCredentialsException() {
     ErrorDetail errorDetail =
         new ErrorDetail(
             "AUTHENTICATION_FAILED",
@@ -82,13 +81,41 @@ public class GlobalExceptionHandler {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = ForbiddenErrorResponse.class)))
-  public ResponseEntity<ForbiddenErrorResponse> handleAccessDeniedException(
-      AccessDeniedException ex) {
+  public ResponseEntity<ForbiddenErrorResponse> handleAccessDeniedException() {
     ErrorDetail errorDetail =
         new ErrorDetail(
             "ACCESS_DENIED", "권한이 없습니다.", "You do not have permission to access this resource.");
     ForbiddenErrorResponse response =
         new ForbiddenErrorResponse("Access denied.", Collections.singletonList(errorDetail));
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+  }
+
+  @ExceptionHandler(BadRequestException.class)
+  @ApiResponse(
+      responseCode = "400",
+      description = "Bad Request",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = BadRequestErrorResponse.class)))
+  public ResponseEntity<BadRequestErrorResponse> handleBadRequestException(BadRequestException ex) {
+    BadRequestErrorResponse response =
+        new BadRequestErrorResponse("Bad request error.", ex.getErrors());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
+
+  @ExceptionHandler(TooManyRequestsException.class)
+  @ApiResponse(
+      responseCode = "429",
+      description = "Too Many Requests",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))
+  public ResponseEntity<ErrorResponse> handleTooManyRequestsException(TooManyRequestsException ex) {
+    ErrorDetail errorDetail = new ErrorDetail("TOO_MANY_REQUESTS", ex.getMessage());
+    ErrorResponse response =
+        new ErrorResponse("Too many requests.", Collections.singletonList(errorDetail));
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
   }
 }
