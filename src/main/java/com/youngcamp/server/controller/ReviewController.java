@@ -1,9 +1,12 @@
 package com.youngcamp.server.controller;
 
+import com.youngcamp.server.annotation.AdminOnly;
 import com.youngcamp.server.domain.Review;
 import com.youngcamp.server.dto.ReviewDTO;
+import com.youngcamp.server.dto.ReviewDTO.DeleteReviewRequest;
 import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.helper.ReviewHelper;
+import com.youngcamp.server.service.AdminChecker;
 import com.youngcamp.server.service.ReviewService;
 import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
   private final ReviewService reviewService;
+  private final AdminChecker adminChecker;
 
-  public ReviewController(ReviewService reviewService) {
+  public ReviewController(ReviewService reviewService, AdminChecker adminChecker) {
     this.reviewService = reviewService;
+    this.adminChecker = adminChecker;
   }
 
   @GetMapping
@@ -81,14 +86,14 @@ public class ReviewController {
   @Operation(summary = "리뷰 삭제", description = "특정 ID의 리뷰를 삭제합니다.")
   // TODO: admin 권한의 경우 비밀번호 대조 없이 삭제 가능하도록 로직 추가
   public SuccessResponse<Void> deleteReview(
-      @PathVariable UUID id, @RequestBody ReviewDTO.DeleteReviewRequest request) {
+      @PathVariable UUID id, @RequestBody DeleteReviewRequest request) {
     reviewService.deleteReview(id, request.getPassword());
     return new SuccessResponse<>("리뷰 삭제 성공", null);
   }
 
   @DeleteMapping
   @Operation(summary = "다수 리뷰 삭제", description = "다수의 리뷰를 삭제합니다. 관리자 권한이 필요합니다.")
-  // TODO: admin권한만 deleteMany가능하도록 권한 추가
+  @AdminOnly
   public SuccessResponse<Void> deleteManyReviews(@RequestBody List<UUID> ids) {
     reviewService.deleteManyReviews(ids);
     return new SuccessResponse<>("리뷰 다수 삭제 성공", null);
