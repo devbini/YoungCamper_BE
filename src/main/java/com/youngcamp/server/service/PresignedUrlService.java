@@ -71,7 +71,7 @@ public class PresignedUrlService {
             .build();
 
     PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-    return new PresignedUrlResponseDTO(presignedRequest.url().toString(),uniqueKey);
+    return new PresignedUrlResponseDTO(presignedRequest.url().toString(), uniqueKey);
   }
 
   private String getMimeType(String objectKey) {
