@@ -9,6 +9,18 @@
 ## 🛠 프로젝트 아키텍쳐
 ![image](https://github.com/user-attachments/assets/bc7f22dc-c4ef-4541-b1fd-eca844a39bba)
 
+## ✨ 프로젝트 시작 방법
+- git clone 후 InteliJ가 있다는 가정 하에 서술합니다.
+- 프로젝트 내 /repository 위치에 BE팀 application.yml 파일을 넣어주세요.
+```
+// Gradle 빌드 (의존성 설치)
+./gradlew build
+```
+```
+// 빌드파일 실행
+java -jar ./build/lib/...jar
+```
+
 ## 📌 Commit Convention (커밋 메시지 규칙)
 > 📌 **한 커밋에는 한가지 이슈만** 담을 것  
 > 📌 가능한 **본문**을 포함할 것.
@@ -17,7 +29,7 @@
 |:-----:|:---|:---|
 |feat|새로운 기능을 추가하는 경우|브랜치 첫 커밋이나 기능 추가시|
 |fix|코드를 수정하는 경우|버그 및 코드 수정의 모든 과정|
-|docs|문서만을 수정하는 경우||
+|docs|문서만을 수정하는 경우| 주석 수정도 포함 해 주세요 |
 |refactor|버그 수정 or 기능 추가가 없는 코드 변경|리팩토링하는 과정|
 |test|테스트 추가 과정|누락된 테스트 추가 또는 기존 테스트 수정|
 
