@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,8 +35,17 @@ public class ReviewController {
   }
 
   @GetMapping
-  @Operation(summary = "리뷰 조회", description = "페이지네이션을 지원하는 모든 리뷰를 조회합니다.")
-  public SuccessResponse<Page<ReviewDTO.Review>> getAllReviews(Pageable pageable) {
+  @Operation(
+      summary = "리뷰 조회",
+      description = "페이지네이션을 지원하는 모든 리뷰를 조회합니다.",
+      parameters = {
+        @Parameter(name = "page", description = "페이지 번호", example = "0"),
+        @Parameter(name = "size", description = "페이지 크기", example = "5"),
+        @Parameter(name = "sort", description = "정렬 기준 (예: createdAt)", example = "createdAt,desc")
+      })
+  public SuccessResponse<Page<ReviewDTO.Review>> getAllReviews(
+      @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC)
+          Pageable pageable) {
     Page<Review> reviews = reviewService.getAllReviews(pageable);
     Page<ReviewDTO.Review> reviewsDTO = reviews.map(ReviewHelper::toDto);
     return new SuccessResponse<>("리뷰 조회 성공", reviewsDTO);
