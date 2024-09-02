@@ -7,7 +7,7 @@
 - **CI/CD** : Jenkins, Docker
 
 ## 🛠 프로젝트 아키텍쳐
-![image](https://github.com/user-attachments/assets/9ff200b0-d8f8-4158-9e5a-7335cc2fdf18)
+![image](https://github.com/user-attachments/assets/bc7f22dc-c4ef-4541-b1fd-eca844a39bba)
 
 ## 📌 Commit Convention (커밋 메시지 규칙)
 > 📌 **한 커밋에는 한가지 이슈만** 담을 것  
