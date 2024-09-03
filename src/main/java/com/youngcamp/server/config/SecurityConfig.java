@@ -50,10 +50,6 @@ public class SecurityConfig {
                 authorize
                     .requestMatchers("/api/swagger-ui/**", "/v3/api-docs/**")
                     .hasRole("DEV")
-                    .requestMatchers("/api/admin/login")
-                    .permitAll()
-                    .requestMatchers("/api/admin/**")
-                    .hasRole("ADMIN")
                     .anyRequest()
                     .permitAll())
         .formLogin(
