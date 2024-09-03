@@ -22,8 +22,6 @@ public class AdminAspect {
 
   @Before("adminOnlyMethods()")
   public void checkAdminAccess() {
-    System.out.println("여기를 통과함>>>>>");
-    System.out.println(adminChecker.isAdmin());
     if (!adminChecker.isAdmin()) {
       throw new AccessDeniedException("권한이 부족합니다.");
     }

@@ -38,9 +38,7 @@ public class PresignedUrlController {
         clientIp,
         k -> {
           Bandwidth limit = Bandwidth.simple(5, Duration.ofSeconds(10));
-          return Bucket4j.builder()
-              .addLimit(limit) // 최신 방식
-              .build();
+          return Bucket4j.builder().addLimit(limit).build();
         });
   }
 

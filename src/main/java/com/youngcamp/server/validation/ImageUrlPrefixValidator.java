@@ -18,9 +18,7 @@ public class ImageUrlPrefixValidator implements ConstraintValidator<ImageUrlPref
       return true;
     }
     boolean isValid = imageUrls.stream().allMatch(url -> url.startsWith(REQUIRED_PREFIX));
-    System.out.println(isValid);
     if (!isValid) {
-      // 로그 추가
       context.disableDefaultConstraintViolation();
       context
           .buildConstraintViolationWithTemplate("Image URL must start with " + REQUIRED_PREFIX)
