@@ -38,9 +38,7 @@ public class PresignedUrlController {
         clientIp,
         k -> {
           Bandwidth limit = Bandwidth.simple(5, Duration.ofSeconds(10));
-          return Bucket4j.builder()
-              .addLimit(limit) // 최신 방식
-              .build();
+          return Bucket4j.builder().addLimit(limit).build();
         });
   }
 
@@ -75,9 +73,8 @@ public class PresignedUrlController {
     Bucket bucket = getBucketForClient(clientIp);
 
     if (bucket.tryConsume(1)) {
-      String presignedUrl = presignedUrlService.generatePresignedUrl(key);
-      return new SuccessResponse<>(
-          "Presigned URL successfully generated.", new PresignedUrlResponseDTO(presignedUrl));
+      PresignedUrlResponseDTO presignedUrlDTO = presignedUrlService.generatePresignedUrl(key);
+      return new SuccessResponse<>("Presigned URL successfully generated.", presignedUrlDTO);
     } else {
       throw new TooManyRequestsException("Too many requests");
     }

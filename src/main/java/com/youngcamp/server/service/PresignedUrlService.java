@@ -1,5 +1,6 @@
 package com.youngcamp.server.service;
 
+import com.youngcamp.server.dto.PresignedUrlResponseDTO;
 import com.youngcamp.server.exception.BadRequestException;
 import com.youngcamp.server.utils.ErrorDetail;
 import java.nio.file.Files;
@@ -36,7 +37,7 @@ public class PresignedUrlService {
   private static final List<String> ALLOWED_IMAGE_TYPES =
       Arrays.asList("image/jpeg", "image/png", "image/gif");
 
-  public String generatePresignedUrl(String objectKey) {
+  public PresignedUrlResponseDTO generatePresignedUrl(String objectKey) {
     String mimeType = getMimeType(objectKey);
     String uniqueKey = UUID.randomUUID() + "-" + objectKey;
 
@@ -70,8 +71,7 @@ public class PresignedUrlService {
             .build();
 
     PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-    System.out.println(presignedRequest.url());
-    return presignedRequest.url().toString();
+    return new PresignedUrlResponseDTO(presignedRequest.url().toString(), uniqueKey);
   }
 
   private String getMimeType(String objectKey) {

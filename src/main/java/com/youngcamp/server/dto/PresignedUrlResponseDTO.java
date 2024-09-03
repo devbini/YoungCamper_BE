@@ -10,8 +10,10 @@ import lombok.Setter;
 public class PresignedUrlResponseDTO {
 
   private String presignedUrl;
+  private String fileName;
 
-  public PresignedUrlResponseDTO(String presignedUrl) {
+  public PresignedUrlResponseDTO(String presignedUrl, String uniqueKey) {
     this.presignedUrl = presignedUrl;
+    this.fileName = uniqueKey;
   }
 }

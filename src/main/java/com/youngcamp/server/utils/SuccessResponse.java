@@ -2,7 +2,11 @@ package com.youngcamp.server.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "성공 응답 구조")
 public class SuccessResponse<T> {
@@ -20,18 +24,5 @@ public class SuccessResponse<T> {
     this.status = "success";
     this.message = message;
     this.data = data;
-  }
-
-  // Getter와 Setter
-  public String getStatus() {
-    return status;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public T getData() {
-    return data;
   }
 }

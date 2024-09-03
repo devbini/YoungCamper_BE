@@ -5,14 +5,20 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(NotFoundException.class)
@@ -88,6 +94,28 @@ public class GlobalExceptionHandler {
     ForbiddenErrorResponse response =
         new ForbiddenErrorResponse("Access denied.", Collections.singletonList(errorDetail));
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ApiResponse(
+      responseCode = "400",
+      description = "부적절한 파라미터 값 포함",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ForbiddenErrorResponse.class)))
+  public ResponseEntity<Map<String, String>> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult()
+        .getAllErrors()
+        .forEach(
+            (error) -> {
+              String fieldName = ((FieldError) error).getField();
+              String errorMessage = error.getDefaultMessage();
+              errors.put(fieldName, errorMessage);
+            });
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(BadRequestException.class)
