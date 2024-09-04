@@ -38,6 +38,7 @@ dependencies {
     testImplementation 'com.h2database:h2'
     testImplementation 'org.junit.platform:junit-platform-launcher'
     testImplementation 'software.amazon.awssdk:s3:2.17.217'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.3.3'
 }
 
 tasks.named('test') {
