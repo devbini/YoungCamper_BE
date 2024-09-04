@@ -66,7 +66,8 @@ public class AnnouncementController {
   public SuccessResponse<AnnouncementEditResponse> editAnnouncement(
       @PathVariable(name = "announcementId") Long announcementId,
       @RequestBody AnnouncementEditRequest request) {
-    AnnouncementEditResponse announcementEditResponse = announcementService.editAnnouncement(announcementId, request);
+    AnnouncementEditResponse announcementEditResponse =
+        announcementService.editAnnouncement(announcementId, request);
     return new SuccessResponse<>("공지사항 수정 성공", announcementEditResponse);
   }
 

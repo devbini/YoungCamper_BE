@@ -2,24 +2,24 @@ package com.youngcamp.server.helper;
 
 import com.youngcamp.server.domain.Announcement;
 import com.youngcamp.server.dto.AnnouncementResponse;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AnnouncementHelper {
 
   public static List<AnnouncementResponse.AnnouncementGetResponse> toDto(
-          List<Announcement> announcement) {
-    List<AnnouncementResponse.AnnouncementGetResponse> dto = announcement.stream()
-            .map(a ->
+      List<Announcement> announcement) {
+    List<AnnouncementResponse.AnnouncementGetResponse> dto =
+        announcement.stream()
+            .map(
+                a ->
                     AnnouncementResponse.AnnouncementGetResponse.builder()
-                            .id(a.getId())
-                            .title(a.getTitle())
-                            .isPinned(a.getIsPinned())
-                            .createdAt(String.valueOf(a.getCreatedAt()))
-                            .updatedAt(String.valueOf(a.getUpdatedAt()))
-                            .build()
-            )
+                        .id(a.getId())
+                        .title(a.getTitle())
+                        .isPinned(a.getIsPinned())
+                        .createdAt(String.valueOf(a.getCreatedAt()))
+                        .updatedAt(String.valueOf(a.getUpdatedAt()))
+                        .build())
             .collect(Collectors.toList());
     List<AnnouncementResponse.AnnouncementGetResponse> collect = dto;
 

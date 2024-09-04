@@ -1,7 +1,5 @@
 package com.youngcamp.server.dto;
 
-import com.youngcamp.server.domain.Announcement;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
