@@ -62,10 +62,8 @@ public class AnnouncementService {
     }
   }
 
-  public List<AnnouncementGetResponse> getAnnouncements() {
-    return announcementRepository.findAllOrderByCreatedAtDesc().stream()
-        .map(AnnouncementGetResponse::new)
-        .collect(Collectors.toList());
+  public List<Announcement> getAnnouncements() {
+    return announcementRepository.findAllOrderByCreatedAtDesc();
   }
 
   public Announcement getDetailAnnouncement(Long announcementId) {
@@ -99,12 +97,8 @@ public class AnnouncementService {
     return AnnouncementEditResponse.builder().id(announcement.getId()).build();
   }
 
-  public List<AnnouncementGetResponse> searchAnnouncements(String keyword) {
-    List<Announcement> foundAnnouncements =
-        announcementRepository.findByTitleLikeOrderByCreatedAtDesc(keyword);
+  public List<Announcement> searchAnnouncements(String keyword) {
 
-    return foundAnnouncements.stream()
-        .map(AnnouncementGetResponse::new)
-        .collect(Collectors.toList());
+    return announcementRepository.findByTitleLikeOrderByCreatedAtDesc(keyword);
   }
 }

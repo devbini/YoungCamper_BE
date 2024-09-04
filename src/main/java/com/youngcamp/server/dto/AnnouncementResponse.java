@@ -25,24 +25,19 @@ public class AnnouncementResponse {
   @Getter
   @AllArgsConstructor
   @NoArgsConstructor
+  @Builder
   public static class AnnouncementGetResponse {
     private Long id;
     private String title;
     private Boolean isPinned;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    @Builder
-    public AnnouncementGetResponse(Announcement announcement) {
-      this.id = announcement.getId();
-      this.title = announcement.getTitle();
-      this.isPinned = announcement.getIsPinned();
-    }
+    private String createdAt;
+    private String updatedAt;
   }
 
   @Builder
   @Getter
   public static class AnnouncementGetDetailResponse {
+    private Long id;
     private String title;
     private String content;
     private String imageUrl;
