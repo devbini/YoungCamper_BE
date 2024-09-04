@@ -1,6 +1,7 @@
 package com.youngcamp.server.controller;
 
 import com.youngcamp.server.annotation.AdminOnly;
+import com.youngcamp.server.domain.Announcement;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
@@ -8,6 +9,7 @@ import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementEditResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetDetailResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementPostResponse;
+import com.youngcamp.server.helper.AnnouncementHelper;
 import com.youngcamp.server.service.AdminChecker;
 import com.youngcamp.server.service.AnnouncementService;
 import com.youngcamp.server.utils.SuccessResponse;
@@ -67,8 +69,8 @@ public class AnnouncementController {
     )
     @GetMapping("/{announcementId}")
     public SuccessResponse<AnnouncementGetDetailResponse> getDetailAnnouncement(@PathVariable(name = "announcementId") Long announcementId) {
-        AnnouncementGetDetailResponse result = announcementService.getDetailAnnouncement(announcementId);
-        return new SuccessResponse<>("공지사항 상세 조회 성공", result);
+        Announcement result = announcementService.getDetailAnnouncement(announcementId);
+        return new SuccessResponse<>("공지사항 상세 조회 성공", AnnouncementHelper.toDto(result));
     }
 
     @Operation(

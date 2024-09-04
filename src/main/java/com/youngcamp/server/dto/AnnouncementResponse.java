@@ -50,8 +50,8 @@ public class AnnouncementResponse {
         private String imageUrl;
         private String fileUrl;
         private Boolean isPinned;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+        private String createdAt;
+        private String updatedAt;
     }
 
 }

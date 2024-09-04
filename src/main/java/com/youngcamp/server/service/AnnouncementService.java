@@ -72,19 +72,11 @@ public class AnnouncementService {
                 .collect(Collectors.toList());
     }
 
-    public AnnouncementGetDetailResponse getDetailAnnouncement(Long announcementId) {
+    public Announcement getDetailAnnouncement(Long announcementId) {
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new NotFoundException("Announcement", String.valueOf(announcementId), "Resource with the specified ID was not found"));
 
-        return AnnouncementGetDetailResponse.builder()
-                .title(announcement.getTitle())
-                .content(announcement.getContent())
-                .imageUrl(announcement.getImageUrl())
-                .fileUrl(announcement.getFileUrl())
-                .isPinned(announcement.getIsPinned())
-                .createdAt(announcement.getCreatedAt())
-                .updatedAt(announcement.getUpdatedAt())
-                .build();
+        return announcement;
     }
 
     public AnnouncementEditResponse editAnnouncement(Long announcementId, AnnouncementEditRequest request) {
