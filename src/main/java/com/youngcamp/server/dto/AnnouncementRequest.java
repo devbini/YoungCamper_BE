@@ -16,6 +16,7 @@ public class AnnouncementRequest {
   public static class AnnouncementPostRequest {
     private String title;
     private String content;
+    private String contentEn;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;
@@ -37,6 +38,7 @@ public class AnnouncementRequest {
   public static class AnnouncementEditRequest {
     private String title;
     private String content;
+    private String contentEn;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;

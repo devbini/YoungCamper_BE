@@ -33,6 +33,7 @@ public class AnnouncementHelper {
             .id(announcement.getId())
             .title(announcement.getTitle())
             .content(announcement.getContent())
+            .contentEn(announcement.getContentEn())
             .imageUrl(announcement.getImageUrl())
             .fileUrl(announcement.getFileUrl())
             .isPinned(announcement.getIsPinned())

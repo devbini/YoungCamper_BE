@@ -38,6 +38,7 @@ public class AnnouncementResponse {
     private Long id;
     private String title;
     private String content;
+    private String contentEn;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;

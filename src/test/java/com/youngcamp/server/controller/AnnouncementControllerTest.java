@@ -69,6 +69,7 @@ public class AnnouncementControllerTest {
         AnnouncementPostRequest.builder()
             .title("title")
             .content("content")
+            .contentEn("contentEn")
             .imageUrl("image.jpg")
             .isPinned(true)
             .build();
@@ -129,6 +130,7 @@ public class AnnouncementControllerTest {
                     Announcement.builder()
                         .title("title" + i)
                         .content("content" + i)
+                        .contentEn("contentEn" + i)
                         .imageUrl("imageUrl" + i)
                         .isPinned(true)
                         .build())
@@ -154,6 +156,7 @@ public class AnnouncementControllerTest {
         Announcement.builder()
             .title("title")
             .content("content")
+            .contentEn("contentEn")
             .imageUrl("imageUrl")
             .isPinned(true)
             .build();
@@ -178,6 +181,7 @@ public class AnnouncementControllerTest {
         Announcement.builder()
             .title("old title")
             .content("old content")
+            .contentEn("old contentEn")
             .imageUrl("old image")
             .isPinned(false)
             .build();
@@ -187,6 +191,7 @@ public class AnnouncementControllerTest {
         AnnouncementEditRequest.builder()
             .title("new title")
             .content("new content")
+            .contentEn("new contentEn")
             .imageUrl("new image")
             .isPinned(true)
             .build();
@@ -230,6 +235,7 @@ public class AnnouncementControllerTest {
                     Announcement.builder()
                         .title("title" + i)
                         .content("content" + i)
+                        .contentEn("contentEn" + i)
                         .imageUrl("imageUrl" + i)
                         .isPinned(true)
                         .build())

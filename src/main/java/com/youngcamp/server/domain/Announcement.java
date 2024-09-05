@@ -22,6 +22,9 @@ public class Announcement {
   @Column(nullable = false, columnDefinition = "text")
   private String content;
 
+  @Column(name = "contenten", nullable = false, columnDefinition = "text")
+  private String contentEn;
+
   @Column(nullable = false)
   private Boolean isPinned;
 
@@ -37,6 +40,7 @@ public class Announcement {
   public void editAnnouncement(AnnouncementEditRequest request) {
     this.title = request.getTitle();
     this.content = request.getContent();
+    this.contentEn = request.getContentEn();
     this.imageUrl = request.getImageUrl();
     this.fileUrl = request.getFileUrl();
     this.isPinned = request.getIsPinned();
