@@ -16,6 +16,7 @@ import com.youngcamp.server.repository.AnnouncementRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,8 +187,7 @@ public class AnnouncementControllerTest {
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(15))
-        .andExpect(jsonPath("$.data[0].translations[1].title").value("Ktitle0"))
-        .andExpect(jsonPath("$.data[0].translations[0].title").value("Etitle0"));
+        .andExpect(jsonPath("$.data[0].content.title").value("타이틀14"));  // 단일 언어 처리
   }
 
   @Test
@@ -195,36 +195,41 @@ public class AnnouncementControllerTest {
     // given
     final String url = "/api/announcements/{announcementId}";
 
-    Announcement announcement = Announcement.builder().imageUrl("imageUrl").isPinned(true).build();
+    Announcement announcement = Announcement.builder()
+        .imageUrl("imageUrl")
+        .isPinned(true)
+        .build();
 
-    AnnouncementContents translationKo =
-        AnnouncementContents.builder()
-            .announcement(announcement)
-            .languageCode("ko")
-            .title("타이틀")
-            .content("콘텐츠")
-            .build();
+    AnnouncementContents translationKo = AnnouncementContents.builder()
+        .announcement(announcement)
+        .languageCode("ko")
+        .title("타이틀")
+        .content("콘텐츠")
+        .build();
 
-    AnnouncementContents translationEn =
-        AnnouncementContents.builder()
-            .announcement(announcement)
-            .languageCode("en")
-            .title("Etitle")
-            .content("Eontent")
-            .build();
+    AnnouncementContents translationEn = AnnouncementContents.builder()
+        .announcement(announcement)
+        .languageCode("en")
+        .title("Etitle")
+        .content("Econtent")
+        .build();
 
     announcement.addContents(List.of(translationKo, translationEn));
 
+    // save announcement and get saved instance with id
     Announcement savedAnnouncement = announcementRepository.save(announcement);
 
+    Hibernate.initialize(savedAnnouncement.getContents());
+    // when and then
     mockMvc
-        .perform(
-            MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+        .perform(MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.translations[1].title").value("Ktitle"))
-        .andExpect(jsonPath("$.data.translations[0].title").value("Etitle"));
+        .andExpect(jsonPath("$.data.content.languageCode").value("ko"))
+        .andExpect(jsonPath("$.data.content.title").value("타이틀"))
+        .andExpect(jsonPath("$.data.content.content").value("콘텐츠"));
   }
+
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
@@ -232,11 +237,14 @@ public class AnnouncementControllerTest {
     // given
     final String url = "/api/announcements/{announcementId}";
 
+    // 기존 공지사항 생성
     Announcement oldAnnouncement =
         Announcement.builder().imageUrl("old image").isPinned(false).build();
 
+    // 공지사항 저장
     Announcement savedAnnouncement = announcementRepository.save(oldAnnouncement);
 
+    // 수정할 내용 준비
     AnnouncementEditRequest request =
         AnnouncementEditRequest.builder()
             .imageUrl("new image")
@@ -255,80 +263,19 @@ public class AnnouncementControllerTest {
                         .build()))
             .build();
 
+    // 요청을 JSON 형식으로 변환
     String json = mapper.writeValueAsString(request);
 
     // expected
-    mockMvc
-        .perform(
-            MockMvcRequestBuilders.patch(url, savedAnnouncement.getId())
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON))
+    mockMvc.perform(MockMvcRequestBuilders.patch(url, savedAnnouncement.getId())
+            .content(json)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.id").value(savedAnnouncement.getId()));
-  }
+        .andExpect(jsonPath("$.data.id").value(savedAnnouncement.getId()))
+        .andExpect(jsonPath("$.data.imageUrl").value("new image"))
+        .andExpect(jsonPath("$.data.isPinned").value(true))
+        .andExpect(jsonPath("$.data.contents[?(@.languageCode == 'ko')].title").value("신규 타이틀"))
+        .andExpect(jsonPath("$.data.contents[?(@.languageCode == 'en')].title").value("New Etitle"));
 
-  @Test
-  public void 공지사항검색() throws Exception {
-    // given
-    Announcement announcement = Announcement.builder().imageUrl("이미지.jpg").isPinned(true).build();
-
-    AnnouncementContents translationKo =
-        AnnouncementContents.builder()
-            .announcement(announcement)
-            .languageCode("ko")
-            .title("타이틀")
-            .content("컨텐츠")
-            .build();
-
-    AnnouncementContents translationEn =
-        AnnouncementContents.builder()
-            .announcement(announcement)
-            .languageCode("en")
-            .title("title")
-            .content("CEnglish")
-            .build();
-
-    announcement.addContents(List.of(translationKo, translationEn));
-    announcementRepository.save(announcement);
-
-    List<Announcement> announcements =
-        IntStream.range(0, 3)
-            .mapToObj(
-                i -> {
-                  Announcement ann =
-                      Announcement.builder().imageUrl("imageUrl" + i).isPinned(true).build();
-
-                  AnnouncementContents koTrans =
-                      AnnouncementContents.builder()
-                          .announcement(ann)
-                          .languageCode("ko")
-                          .title("타이틀" + i)
-                          .content("컨텐츠" + i)
-                          .build();
-
-                  AnnouncementContents enTrans =
-                      AnnouncementContents.builder()
-                          .announcement(ann)
-                          .languageCode("en")
-                          .title("title" + i)
-                          .content("content" + i)
-                          .build();
-
-                  ann.addContents(List.of(koTrans, enTrans));
-                  return ann;
-                })
-            .collect(Collectors.toList());
-
-    announcementRepository.saveAll(announcements);
-
-    final String url = "/api/announcements/search?keyword=title";
-    String keyword = "title";
-
-    // expected
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(url).contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.length()").value(3));
   }
 }

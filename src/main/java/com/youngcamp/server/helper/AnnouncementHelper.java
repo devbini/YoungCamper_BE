@@ -8,42 +8,57 @@ import java.util.stream.Collectors;
 
 public class AnnouncementHelper {
 
+  // 공지사항 목록을 DTO로 변환 (단일 언어 콘텐츠 사용)
   public static List<AnnouncementResponse.AnnouncementGetResponse> toDto(
       List<Announcement> announcements) {
-    List<AnnouncementResponse.AnnouncementGetResponse> dto =
-        announcements.stream()
-            .map(
-                a -> {
-                  String translatedTitle =
-                      a.getContents().stream()
-                          .map(AnnouncementContents::getTitle)
-                          .findFirst()
-                          .orElse("정보없음");
+    return announcements.stream()
+        .map(a -> {
+          AnnouncementContents filteredContent = a.getFilteredContent();
 
-                  return AnnouncementResponse.AnnouncementGetResponse.builder()
-                      .id(a.getId())
-                      .isPinned(a.getIsPinned())
-                      .createdAt(String.valueOf(a.getCreatedAt()))
-                      .updatedAt(String.valueOf(a.getUpdatedAt()))
-                      .contents(
-                          a.getContents().stream()
-                              .map(
-                                  t ->
-                                      AnnouncementResponse.AnnouncementTrResponse.builder()
-                                          .languageCode(t.getLanguageCode())
-                                          .title(t.getTitle())
-                                          .content(t.getContent())
-                                          .build())
-                              .collect(Collectors.toList()))
+          // 필터링된 콘텐츠가 null일 경우 기본값을 설정
+          AnnouncementResponse.AnnouncementTrResponse contentResponse =
+              (filteredContent != null)
+                  ? AnnouncementResponse.AnnouncementTrResponse.builder()
+                  .languageCode(filteredContent.getLanguageCode())
+                  .title(filteredContent.getTitle())
+                  .content(filteredContent.getContent())
+                  .build()
+                  : AnnouncementResponse.AnnouncementTrResponse.builder()
+                      .languageCode("unknown")
+                      .title("No title available")
+                      .content("No content available")
                       .build();
-                })
-            .collect(Collectors.toList());
 
-    return dto;
+          return AnnouncementResponse.AnnouncementGetResponse.builder()
+              .id(a.getId())
+              .isPinned(a.getIsPinned())
+              .createdAt(String.valueOf(a.getCreatedAt()))
+              .updatedAt(String.valueOf(a.getUpdatedAt()))
+              .content(contentResponse)
+              .build();
+        })
+        .collect(Collectors.toList());
   }
 
+  // 공지사항 상세 내용을 DTO로 변환 (단일 언어 콘텐츠 사용)
   public static AnnouncementResponse.AnnouncementGetDetailResponse toDto(
       Announcement announcement) {
+    AnnouncementContents filteredContent = announcement.getFilteredContent();
+
+    // 필터링된 콘텐츠가 null일 경우 기본값을 설정
+    AnnouncementResponse.AnnouncementTrResponse contentResponse =
+        (filteredContent != null)
+            ? AnnouncementResponse.AnnouncementTrResponse.builder()
+            .languageCode(filteredContent.getLanguageCode())
+            .title(filteredContent.getTitle())
+            .content(filteredContent.getContent())
+            .build()
+            : AnnouncementResponse.AnnouncementTrResponse.builder()
+                .languageCode("unknown")
+                .title("No title available")
+                .content("No content available")
+                .build();
+
     return AnnouncementResponse.AnnouncementGetDetailResponse.builder()
         .id(announcement.getId())
         .imageUrl(announcement.getImageUrl())
@@ -51,16 +66,7 @@ public class AnnouncementHelper {
         .isPinned(announcement.getIsPinned())
         .createdAt(String.valueOf(announcement.getCreatedAt()))
         .updatedAt(String.valueOf(announcement.getUpdatedAt()))
-        .contents(
-            announcement.getContents().stream()
-                .map(
-                    t ->
-                        AnnouncementResponse.AnnouncementTrResponse.builder()
-                            .languageCode(t.getLanguageCode())
-                            .title(t.getTitle())
-                            .content(t.getContent())
-                            .build())
-                .collect(Collectors.toList()))
+        .content(contentResponse)
         .build();
   }
 }

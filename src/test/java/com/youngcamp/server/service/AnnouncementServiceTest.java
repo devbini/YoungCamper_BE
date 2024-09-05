@@ -15,6 +15,7 @@ import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.repository.AnnouncementRepository;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,7 +68,7 @@ public class AnnouncementServiceTest {
   @Test
   public void 공지사항삭제실패_존재하지않은글삭제시도() {
     // given
-    doReturn(Collections.EMPTY_LIST)
+    doReturn(Collections.emptyList())
         .when(announcementRepository)
         .findExistingIds(Arrays.asList(-1L, -2L));
     AnnouncementDeleteRequest request =
@@ -85,11 +86,11 @@ public class AnnouncementServiceTest {
   public void 공지사항상세조회실패_존재하지않은글조회시도() {
     // given
     Long announcementId = 1L;
-    doReturn(Optional.empty()).when(announcementRepository).findById(any(Long.class));
+    doReturn(Optional.empty()).when(announcementRepository).findByIdWithContents(any(Long.class));
 
     // when
     NotFoundException result =
-        assertThrows(NotFoundException.class, () -> target.getDetailAnnouncement(announcementId));
+        assertThrows(NotFoundException.class, () -> target.getDetailAnnouncement(announcementId, "ko"));
 
     // then
     assertThat(result.getResourceType()).isEqualTo("Announcement");
@@ -120,4 +121,5 @@ public class AnnouncementServiceTest {
 
     return announcement;
   }
+
 }
