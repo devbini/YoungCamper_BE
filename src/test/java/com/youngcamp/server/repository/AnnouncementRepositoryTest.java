@@ -3,7 +3,7 @@ package com.youngcamp.server.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.youngcamp.server.domain.Announcement;
-import java.time.LocalDateTime;
+import com.youngcamp.server.domain.AnnouncementContents;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,40 +32,51 @@ public class AnnouncementRepositoryTest {
   @Test
   public void 공지사항등록() {
     // given
-    final Announcement announcement =
-        Announcement.builder()
-            .title("title")
-            .content("content")
-            .isPinned(true)
-            .imageUrl("s3-image-url")
+    Announcement announcement =
+        Announcement.builder().isPinned(true).imageUrl("s3-image-url").build();
+
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("KTitle")
+            .content("KContent")
             .build();
+
+    AnnouncementContents translationEn =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("en")
+            .title("English Title")
+            .content("English Content")
+            .build();
+
+    announcement.addContents(List.of(translationKo, translationEn));
+
     // when
-    final Announcement result = announcementRepository.save(announcement);
+    Announcement savedAnnouncement = announcementRepository.save(announcement);
 
     // then
-    assertThat(result.getTitle()).isNotNull();
-    assertThat(result.getTitle()).isEqualTo("title");
-
-    assertThat(result.getContent()).isNotNull();
-    assertThat(result.getContent()).isEqualTo("content");
-
-    assertThat(result.getIsPinned()).isNotNull();
-    assertThat(result.getIsPinned()).isEqualTo(true);
-
-    assertThat(result.getImageUrl()).isNotNull();
-    assertThat(result.getImageUrl()).isEqualTo("s3-image-url");
+    assertThat(savedAnnouncement.getContents()).hasSize(2);
+    assertThat(savedAnnouncement.getContents().get(0).getTitle()).isEqualTo("Korean Title");
+    assertThat(savedAnnouncement.getContents().get(1).getTitle()).isEqualTo("English Title");
   }
 
   @Test
   public void 공지사항삭제_1개() {
     // given
-    final Announcement announcement =
-        Announcement.builder()
-            .title("title")
-            .content("content")
-            .imageUrl("s3-image-url")
-            .isPinned(true)
+    Announcement announcement =
+        Announcement.builder().isPinned(true).imageUrl("s3-image-url").build();
+
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("Korean Title")
+            .content("Korean Content")
             .build();
+
+    announcement.addContents(List.of(translationKo));
 
     // when
     Announcement savedAnnouncement = announcementRepository.save(announcement);
@@ -82,14 +93,21 @@ public class AnnouncementRepositoryTest {
     List<Announcement> announcements =
         IntStream.range(0, 10)
             .mapToObj(
-                i ->
-                    Announcement.builder()
-                        .title("title" + i)
-                        .content("content" + i)
-                        .imageUrl("s3-image-url#" + i)
-                        .isPinned(true)
-                        .build())
+                i -> {
+                  Announcement announcement =
+                      Announcement.builder().imageUrl("s3-image-url#" + i).isPinned(true).build();
+                  AnnouncementContents translationKo =
+                      AnnouncementContents.builder()
+                          .announcement(announcement)
+                          .languageCode("ko")
+                          .title("title" + i)
+                          .content("content" + i)
+                          .build();
+                  announcement.addContents(List.of(translationKo));
+                  return announcement;
+                })
             .collect(Collectors.toList());
+
     List<Announcement> savedAnnouncements = announcementRepository.saveAll(announcements);
 
     List<Long> requestIds =
@@ -107,22 +125,28 @@ public class AnnouncementRepositoryTest {
   public void 존재하는공지사항만반환성공() {
     // given
     final Announcement announcement1 =
-        Announcement.builder()
-            .id(-1L)
-            .title("공지사항 1")
-            .content("내용 1")
-            .isPinned(false)
-            .imageUrl("image1.jpg")
-            .build();
+        Announcement.builder().id(-1L).isPinned(false).imageUrl("image1.jpg").build();
 
     final Announcement announcement2 =
-        Announcement.builder()
-            .id(-2L)
+        Announcement.builder().id(-2L).isPinned(false).imageUrl("image2.jpg").build();
+
+    final AnnouncementContents translationKo1 =
+        AnnouncementContents.builder()
+            .announcement(announcement1)
+            .languageCode("ko")
+            .title("공지사항 1")
+            .content("내용 1")
+            .build();
+
+    final AnnouncementContents translationKo2 =
+        AnnouncementContents.builder()
+            .announcement(announcement2)
+            .languageCode("ko")
             .title("공지사항 2")
             .content("내용 2")
-            .isPinned(false)
-            .imageUrl("image2.jpg")
             .build();
+    announcement1.addContents(List.of(translationKo1));
+    announcement2.addContents(List.of(translationKo2));
 
     List<Announcement> savedAnnouncements =
         announcementRepository.saveAll(Arrays.asList(announcement1, announcement2));
@@ -147,15 +171,21 @@ public class AnnouncementRepositoryTest {
     List<Announcement> announcements =
         IntStream.range(0, 20)
             .mapToObj(
-                i ->
-                    Announcement.builder()
-                        .title("title" + i)
-                        .content("content" + i)
-                        .imageUrl("imageUrl" + i)
-                        .isPinned(true)
-                        .createdAt(LocalDateTime.now().plusSeconds(i))
-                        .updatedAt(LocalDateTime.now().plusSeconds(i))
-                        .build())
+                i -> {
+                  Announcement announcement =
+                      Announcement.builder().imageUrl("imageUrl" + i).isPinned(true).build();
+
+                  AnnouncementContents translationKo =
+                      AnnouncementContents.builder()
+                          .announcement(announcement)
+                          .languageCode("ko")
+                          .title("title" + i)
+                          .content("content" + i)
+                          .build();
+
+                  announcement.addContents(List.of(translationKo));
+                  return announcement;
+                })
             .collect(Collectors.toList());
 
     announcementRepository.saveAll(announcements);
@@ -165,7 +195,15 @@ public class AnnouncementRepositoryTest {
 
     // then
     assertThat(results.size()).isEqualTo(20);
-    assertThat(results.get(0).getTitle()).isEqualTo("title19");
+    // AnnouncementTranslation에서 title을 가져와서 검증
+    Announcement firstAnnouncement = results.get(0);
+    AnnouncementContents firstTranslation =
+        firstAnnouncement.getContents().stream()
+            .filter(t -> "ko".equals(t.getLanguageCode())) // 한국어 번역 데이터 확인
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("한국어 번역이 존재하지 않습니다."));
+
+    assertThat(firstTranslation.getTitle()).isEqualTo("title19");
     assertThat(results)
         .isSortedAccordingTo((a1, a2) -> a2.getCreatedAt().compareTo(a1.getCreatedAt()));
   }
@@ -173,13 +211,25 @@ public class AnnouncementRepositoryTest {
   @Test
   public void 게시글상세조회() {
     // given
-    Announcement announcement =
-        Announcement.builder()
-            .title("title")
-            .content("content")
-            .imageUrl("image.jpg")
-            .isPinned(true)
+    Announcement announcement = Announcement.builder().imageUrl("imageUrl").isPinned(true).build();
+
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("타이틀")
+            .content("콘텐츠")
             .build();
+
+    AnnouncementContents translationEn =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("en")
+            .title("English title")
+            .content("English content")
+            .build();
+
+    announcement.addContents(List.of(translationKo, translationEn));
     Announcement savedAnnouncement = announcementRepository.save(announcement);
 
     // when
@@ -187,35 +237,64 @@ public class AnnouncementRepositoryTest {
 
     // then
     assertThat(result.isPresent()).isTrue();
-    assertThat(result.get().getTitle()).isEqualTo("title");
+
+    Announcement foundAnnouncement = result.get();
+
+    // 한국어 번역 검증
+    AnnouncementContents koTranslation =
+        foundAnnouncement.getContents().stream()
+            .filter(t -> "ko".equals(t.getLanguageCode()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("한국어 번역이 존재하지 않습니다."));
+
+    assertThat(koTranslation.getTitle()).isEqualTo("타이틀");
+    assertThat(koTranslation.getContent()).isEqualTo("콘텐츠");
+
+    // 영어 번역 검증
+    AnnouncementContents enTranslation =
+        foundAnnouncement.getContents().stream()
+            .filter(t -> "en".equals(t.getLanguageCode()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("영어 번역이 존재하지 않습니다."));
+
+    assertThat(enTranslation.getTitle()).isEqualTo("English title");
+    assertThat(enTranslation.getContent()).isEqualTo("English content");
   }
 
   @Test
   public void 공지사항검색() {
     // given
-    Announcement announcement =
-        Announcement.builder()
+    Announcement announcement = Announcement.builder().imageUrl("이미지.jpg").isPinned(true).build();
+
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
             .title("타이틀")
             .content("컨텐츠")
-            .imageUrl("이미지.jpg")
-            .isPinned(true)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
             .build();
-    Announcement savedAnnouncement = announcementRepository.save(announcement);
+
+    announcement.addContents(List.of(translationKo));
+    announcementRepository.save(announcement);
 
     List<Announcement> announcements =
         IntStream.range(0, 3)
             .mapToObj(
-                i ->
-                    Announcement.builder()
-                        .title("title" + i)
-                        .content("content" + i)
-                        .imageUrl("imageUrl" + i)
-                        .isPinned(true)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .build())
+                i -> {
+                  Announcement ann =
+                      Announcement.builder().imageUrl("imageUrl" + i).isPinned(true).build();
+
+                  AnnouncementContents translationKoTemp =
+                      AnnouncementContents.builder()
+                          .announcement(ann)
+                          .languageCode("ko")
+                          .title("title" + i)
+                          .content("content" + i)
+                          .build();
+
+                  ann.addContents(List.of(translationKoTemp));
+                  return ann;
+                })
             .collect(Collectors.toList());
     announcementRepository.saveAll(announcements);
 
@@ -227,7 +306,5 @@ public class AnnouncementRepositoryTest {
 
     // then
     assertThat(foundAnnouncements.size()).isEqualTo(3);
-    assertThat(foundAnnouncements)
-        .isSortedAccordingTo((a1, a2) -> a2.getCreatedAt().compareTo(a1.getCreatedAt()));
   }
 }

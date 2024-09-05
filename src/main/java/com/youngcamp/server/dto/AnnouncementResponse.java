@@ -1,5 +1,6 @@
 package com.youngcamp.server.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,23 +27,31 @@ public class AnnouncementResponse {
   @Builder
   public static class AnnouncementGetResponse {
     private Long id;
-    private String title;
     private Boolean isPinned;
     private String createdAt;
     private String updatedAt;
+    private List<AnnouncementTrResponse> contents;
   }
 
   @Builder
   @Getter
   public static class AnnouncementGetDetailResponse {
     private Long id;
-    private String title;
-    private String content;
-    private String contentEn;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;
     private String createdAt;
     private String updatedAt;
+    private List<AnnouncementTrResponse> contents;
+  }
+
+  @Getter
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AnnouncementTrResponse {
+    private String languageCode;
+    private String title;
+    private String content;
   }
 }
