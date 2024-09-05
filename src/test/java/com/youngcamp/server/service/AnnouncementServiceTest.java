@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.youngcamp.server.domain.Announcement;
+import com.youngcamp.server.domain.AnnouncementContents;
+import com.youngcamp.server.dto.AnnouncementRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementPostResponse;
@@ -27,8 +29,6 @@ public class AnnouncementServiceTest {
 
   @InjectMocks private AnnouncementService target;
 
-  private final String title = "title";
-  private final String content = "content";
   private final String imageUrl = "s3-image-url";
   private final Boolean isPinned = true;
 
@@ -38,10 +38,20 @@ public class AnnouncementServiceTest {
     doReturn(announcement()).when(announcementRepository).save(any(Announcement.class));
     AnnouncementPostRequest request =
         AnnouncementPostRequest.builder()
-            .title(title)
-            .content(content)
             .imageUrl(imageUrl)
             .isPinned(isPinned)
+            .contents(
+                Arrays.asList(
+                    AnnouncementRequest.AnnouncementTrRequest.builder()
+                        .languageCode("ko")
+                        .title("Ktitle")
+                        .content("Kcontent")
+                        .build(),
+                    AnnouncementRequest.AnnouncementTrRequest.builder()
+                        .languageCode("en")
+                        .title("Etitle")
+                        .content("Econtent")
+                        .build()))
             .build();
 
     // when
@@ -87,12 +97,27 @@ public class AnnouncementServiceTest {
   }
 
   private Announcement announcement() {
-    return Announcement.builder()
-        .id(-1L)
-        .title(title)
-        .content(content)
-        .imageUrl(imageUrl)
-        .isPinned(isPinned)
-        .build();
+    Announcement announcement =
+        Announcement.builder().id(-1L).imageUrl(imageUrl).isPinned(isPinned).build();
+
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("Ktitle")
+            .content("Kcontent")
+            .build();
+
+    AnnouncementContents translationEn =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("en")
+            .title("Etitle")
+            .content("Econtent")
+            .build();
+
+    announcement.addContents(Arrays.asList(translationKo, translationEn));
+
+    return announcement;
   }
 }

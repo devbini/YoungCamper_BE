@@ -3,6 +3,8 @@ package com.youngcamp.server.domain;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 
 @Entity
@@ -11,16 +13,9 @@ import lombok.*;
 @Builder
 @Getter
 public class Announcement {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @Column(nullable = false)
-  private String title;
-
-  @Column(nullable = false, columnDefinition = "text")
-  private String content;
 
   @Column(nullable = false)
   private Boolean isPinned;
@@ -34,12 +29,22 @@ public class Announcement {
 
   private LocalDateTime updatedAt;
 
+  @OneToMany(
+      mappedBy = "announcement",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  @Builder.Default
+  private List<AnnouncementContents> contents = new ArrayList<>();;
+
+  public void addContents(List<AnnouncementContents> contents) {
+    this.contents.addAll(contents);
+  }
+
   public void editAnnouncement(AnnouncementEditRequest request) {
-    this.title = request.getTitle();
-    this.content = request.getContent();
+    this.isPinned = request.getIsPinned();
     this.imageUrl = request.getImageUrl();
     this.fileUrl = request.getFileUrl();
-    this.isPinned = request.getIsPinned();
     this.updatedAt = LocalDateTime.now();
   }
 }

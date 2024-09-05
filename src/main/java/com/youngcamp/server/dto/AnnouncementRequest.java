@@ -14,11 +14,10 @@ public class AnnouncementRequest {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class AnnouncementPostRequest {
-    private String title;
-    private String content;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;
+    private List<AnnouncementTrRequest> contents;
   }
 
   @Getter
@@ -35,10 +34,19 @@ public class AnnouncementRequest {
   @AllArgsConstructor
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public static class AnnouncementEditRequest {
-    private String title;
-    private String content;
     private String imageUrl;
     private String fileUrl;
     private Boolean isPinned;
+    private List<AnnouncementTrRequest> contents;
+  }
+
+  @Getter
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AnnouncementTrRequest {
+    private String languageCode;
+    private String title;
+    private String content;
   }
 }
