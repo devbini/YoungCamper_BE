@@ -1,11 +1,11 @@
 package com.youngcamp.server.service;
 
 import com.youngcamp.server.domain.Announcement;
+import com.youngcamp.server.domain.AnnouncementContents;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementEditResponse;
-import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementPostResponse;
 import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.repository.AnnouncementRepository;
@@ -30,8 +30,6 @@ public class AnnouncementService {
 
     Announcement announcement =
         Announcement.builder()
-            .title(request.getTitle())
-            .content(request.getContent())
             .imageUrl(request.getImageUrl())
             .fileUrl(request.getFileUrl())
             .isPinned(request.getIsPinned())
@@ -39,6 +37,19 @@ public class AnnouncementService {
             .updatedAt(LocalDateTime.now())
             .build();
 
+    List<AnnouncementContents> contents =
+        request.getContents().stream()
+            .map(
+                trRequest ->
+                    AnnouncementContents.builder()
+                        .announcement(announcement)
+                        .languageCode(trRequest.getLanguageCode())
+                        .title(trRequest.getTitle())
+                        .content(trRequest.getContent())
+                        .build())
+            .collect(Collectors.toList());
+
+    announcement.addContents(contents);
     Announcement savedAnnouncement = announcementRepository.save(announcement);
 
     return AnnouncementPostResponse.builder().id(savedAnnouncement.getId()).build();
@@ -62,26 +73,24 @@ public class AnnouncementService {
     }
   }
 
-  public List<AnnouncementGetResponse> getAnnouncements() {
-    return announcementRepository.findAllOrderByCreatedAtDesc().stream()
-        .map(AnnouncementGetResponse::new)
-        .collect(Collectors.toList());
+  @Transactional
+  public List<Announcement> getAnnouncements() {
+    return announcementRepository.findAllWithContents();
   }
 
+  @Transactional
   public Announcement getDetailAnnouncement(Long announcementId) {
-    Announcement announcement =
-        announcementRepository
-            .findById(announcementId)
-            .orElseThrow(
-                () ->
-                    new NotFoundException(
-                        "Announcement",
-                        String.valueOf(announcementId),
-                        "Resource with the specified ID was not found"));
-
-    return announcement;
+    return announcementRepository
+        .findByIdWithContents(announcementId)
+        .orElseThrow(
+            () ->
+                new NotFoundException(
+                    "Announcement",
+                    String.valueOf(announcementId),
+                    "Resource with the specified ID was not found"));
   }
 
+  @Transactional
   public AnnouncementEditResponse editAnnouncement(
       Long announcementId, AnnouncementEditRequest request) {
     Announcement announcement =
@@ -96,15 +105,23 @@ public class AnnouncementService {
 
     announcement.editAnnouncement(request);
 
+    List<AnnouncementContents> existingContents = announcement.getContents();
+    for (AnnouncementContents content : existingContents) {
+      request.getContents().stream()
+          .filter(reqTr -> reqTr.getLanguageCode().equals(content.getLanguageCode()))
+          .findFirst()
+          .ifPresent(
+              reqTr -> {
+                content.setTitle(reqTr.getTitle());
+                content.setContent(reqTr.getContent());
+              });
+    }
+
     return AnnouncementEditResponse.builder().id(announcement.getId()).build();
   }
 
-  public List<AnnouncementGetResponse> searchAnnouncements(String keyword) {
-    List<Announcement> foundAnnouncements =
-        announcementRepository.findByTitleLikeOrderByCreatedAtDesc(keyword);
+  public List<Announcement> searchAnnouncements(String keyword) {
 
-    return foundAnnouncements.stream()
-        .map(AnnouncementGetResponse::new)
-        .collect(Collectors.toList());
+    return announcementRepository.findByTitleLikeOrderByCreatedAtDesc(keyword);
   }
 }
