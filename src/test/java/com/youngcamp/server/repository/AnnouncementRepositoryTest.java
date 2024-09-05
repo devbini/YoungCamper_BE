@@ -195,11 +195,10 @@ public class AnnouncementRepositoryTest {
 
     // then
     assertThat(results.size()).isEqualTo(20);
-    // AnnouncementTranslation에서 title을 가져와서 검증
     Announcement firstAnnouncement = results.get(0);
     AnnouncementContents firstTranslation =
         firstAnnouncement.getContents().stream()
-            .filter(t -> "ko".equals(t.getLanguageCode())) // 한국어 번역 데이터 확인
+            .filter(t -> "ko".equals(t.getLanguageCode()))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("한국어 번역이 존재하지 않습니다."));
 
@@ -225,8 +224,8 @@ public class AnnouncementRepositoryTest {
         AnnouncementContents.builder()
             .announcement(announcement)
             .languageCode("en")
-            .title("English title")
-            .content("English content")
+            .title("Etitle")
+            .content("Econtent")
             .build();
 
     announcement.addContents(List.of(translationKo, translationEn));
@@ -240,7 +239,6 @@ public class AnnouncementRepositoryTest {
 
     Announcement foundAnnouncement = result.get();
 
-    // 한국어 번역 검증
     AnnouncementContents koTranslation =
         foundAnnouncement.getContents().stream()
             .filter(t -> "ko".equals(t.getLanguageCode()))
@@ -250,7 +248,6 @@ public class AnnouncementRepositoryTest {
     assertThat(koTranslation.getTitle()).isEqualTo("타이틀");
     assertThat(koTranslation.getContent()).isEqualTo("콘텐츠");
 
-    // 영어 번역 검증
     AnnouncementContents enTranslation =
         foundAnnouncement.getContents().stream()
             .filter(t -> "en".equals(t.getLanguageCode()))
