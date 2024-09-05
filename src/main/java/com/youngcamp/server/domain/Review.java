@@ -15,6 +15,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,13 +60,15 @@ public class Review {
     if (this.sequence == null) {
       this.sequence = generateNextSequence();
     }
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
+    ZonedDateTime nowInKorea = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+    this.createdAt = nowInKorea.toLocalDateTime();
+    this.updatedAt = nowInKorea.toLocalDateTime();
   }
 
   @PreUpdate
   private void preUpdate() {
-    this.updatedAt = LocalDateTime.now();
+    ZonedDateTime nowInKorea = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+    this.updatedAt = nowInKorea.toLocalDateTime();
   }
 
   private Integer generateNextSequence() {
