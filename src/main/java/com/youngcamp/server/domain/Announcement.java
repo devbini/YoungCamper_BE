@@ -1,6 +1,5 @@
 package com.youngcamp.server.domain;
 
-import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,16 +21,16 @@ public class Announcement {
   @Column(nullable = false)
   private Boolean isPinned;
 
-  @Column(nullable=true)
+  @Column(nullable = true)
   private String imageUrl;
 
-  @Column(nullable=true)
+  @Column(nullable = true)
   private String fileUrl;
 
   @Column(updatable = false)
   private LocalDateTime createdAt;
 
-  @Column(nullable=false)
+  @Column(nullable = false)
   private LocalDateTime updatedAt;
 
   @Getter
@@ -39,9 +38,7 @@ public class Announcement {
   @Builder.Default
   private List<AnnouncementContents> contents = new ArrayList<>();
 
-  @Setter
-  @Transient
-  private AnnouncementContents filteredContent;
+  @Setter @Transient private AnnouncementContents filteredContent;
 
   public void addContents(List<AnnouncementContents> contents) {
     if (this.contents == null) {
@@ -65,9 +62,7 @@ public class Announcement {
     this.updatedAt = LocalDateTime.now();
   }
 
-
   public void clearContents() {
     this.contents.clear();
   }
-
 }

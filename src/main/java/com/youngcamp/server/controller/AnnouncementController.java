@@ -6,7 +6,6 @@ import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementEditResponse;
-import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetDetailResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementPostResponse;
 import com.youngcamp.server.helper.AnnouncementHelper;
@@ -73,14 +72,13 @@ public class AnnouncementController {
     return new SuccessResponse<>("공지사항 조회 성공", AnnouncementHelper.toDto(announcements));
   }
 
-
-
   @Operation(summary = "공지사항 상세 조회 API", description = "공지사항 ID값으로 특정 공지 사항 내용을 조회합니다.")
   @GetMapping("/{announcementId}")
   public SuccessResponse<?> getDetailAnnouncement(
       @PathVariable(name = "announcementId") Long announcementId,
       @RequestHeader(value = "Accept-Language", defaultValue = "ko") String languageCode) {
-    Announcement detailAnnouncement = announcementService.getDetailAnnouncement(announcementId, languageCode);
+    Announcement detailAnnouncement =
+        announcementService.getDetailAnnouncement(announcementId, languageCode);
     return new SuccessResponse<>("공지사항 상세 조회 성공", AnnouncementHelper.toDto(detailAnnouncement));
   }
 }

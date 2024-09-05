@@ -67,30 +67,28 @@ public class AnnouncementRepositoryTest {
   @Test
   public void 공지사항삭제_1개() {
     // given
-    Announcement announcement = Announcement.builder()
-        .isPinned(true)
-        .imageUrl("s3-image-url")
-        .build();
+    Announcement announcement =
+        Announcement.builder().isPinned(true).imageUrl("s3-image-url").build();
 
-    AnnouncementContents translationKo = AnnouncementContents.builder()
-        .announcement(announcement)
-        .languageCode("ko")
-        .title("Korean Title")
-        .content("Korean Content")
-        .build();
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("Korean Title")
+            .content("Korean Content")
+            .build();
 
     announcement.addContents(List.of(translationKo));
-System.out.println(announcement.getContents());
+    System.out.println(announcement.getContents());
     // when
     Announcement savedAnnouncement = announcementRepository.save(announcement);
     announcementRepository.deleteAllById(List.of(savedAnnouncement.getId()));
 
     Optional<Announcement> result = announcementRepository.findById(savedAnnouncement.getId());
-System.out.println(result);
+    System.out.println(result);
     // then
     assertThat(result).isEmpty();
   }
-
 
   @Test
   @Transactional
@@ -126,7 +124,6 @@ System.out.println(result);
     // then
     assertThat(result).isEmpty();
   }
-
 
   @Test
   public void 존재하는공지사항만반환성공() {

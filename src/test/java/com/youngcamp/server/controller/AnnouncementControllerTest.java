@@ -187,7 +187,7 @@ public class AnnouncementControllerTest {
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(15))
-        .andExpect(jsonPath("$.data[0].content.title").value("타이틀14"));  // 단일 언어 처리
+        .andExpect(jsonPath("$.data[0].content.title").value("타이틀14")); // 단일 언어 처리
   }
 
   @Test
@@ -195,24 +195,23 @@ public class AnnouncementControllerTest {
     // given
     final String url = "/api/announcements/{announcementId}";
 
-    Announcement announcement = Announcement.builder()
-        .imageUrl("imageUrl")
-        .isPinned(true)
-        .build();
+    Announcement announcement = Announcement.builder().imageUrl("imageUrl").isPinned(true).build();
 
-    AnnouncementContents translationKo = AnnouncementContents.builder()
-        .announcement(announcement)
-        .languageCode("ko")
-        .title("타이틀")
-        .content("콘텐츠")
-        .build();
+    AnnouncementContents translationKo =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("ko")
+            .title("타이틀")
+            .content("콘텐츠")
+            .build();
 
-    AnnouncementContents translationEn = AnnouncementContents.builder()
-        .announcement(announcement)
-        .languageCode("en")
-        .title("Etitle")
-        .content("Econtent")
-        .build();
+    AnnouncementContents translationEn =
+        AnnouncementContents.builder()
+            .announcement(announcement)
+            .languageCode("en")
+            .title("Etitle")
+            .content("Econtent")
+            .build();
 
     announcement.addContents(List.of(translationKo, translationEn));
 
@@ -222,14 +221,14 @@ public class AnnouncementControllerTest {
     Hibernate.initialize(savedAnnouncement.getContents());
     // when and then
     mockMvc
-        .perform(MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
-            .contentType(MediaType.APPLICATION_JSON))
+        .perform(
+            MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.content.languageCode").value("ko"))
         .andExpect(jsonPath("$.data.content.title").value("타이틀"))
         .andExpect(jsonPath("$.data.content.content").value("콘텐츠"));
   }
-
 
   @Test
   @WithMockUser(roles = {"ADMIN"})
@@ -267,15 +266,17 @@ public class AnnouncementControllerTest {
     String json = mapper.writeValueAsString(request);
 
     // expected
-    mockMvc.perform(MockMvcRequestBuilders.patch(url, savedAnnouncement.getId())
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON))
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(url, savedAnnouncement.getId())
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.id").value(savedAnnouncement.getId()))
         .andExpect(jsonPath("$.data.imageUrl").value("new image"))
         .andExpect(jsonPath("$.data.isPinned").value(true))
         .andExpect(jsonPath("$.data.contents[?(@.languageCode == 'ko')].title").value("신규 타이틀"))
-        .andExpect(jsonPath("$.data.contents[?(@.languageCode == 'en')].title").value("New Etitle"));
-
+        .andExpect(
+            jsonPath("$.data.contents[?(@.languageCode == 'en')].title").value("New Etitle"));
   }
 }

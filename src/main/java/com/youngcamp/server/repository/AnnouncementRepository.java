@@ -26,10 +26,12 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
   @Query("SELECT a FROM Announcement a LEFT JOIN FETCH a.contents WHERE a.id = :id")
   Optional<Announcement> findByIdWithContents(@Param("id") Long id);
 
-  @Query("SELECT a FROM Announcement a JOIN a.contents c WHERE c.title LIKE %:title% ORDER BY a.createdAt DESC")
+  @Query(
+      "SELECT a FROM Announcement a JOIN a.contents c WHERE c.title LIKE %:title% ORDER BY a.createdAt DESC")
   List<Announcement> findByTitleLikeOrderByCreatedAtDesc(@Param("title") String title);
 
-  @Query("SELECT DISTINCT a FROM Announcement a JOIN FETCH a.contents c WHERE (LOWER(c.title) LIKE %:keyword% OR LOWER(c.content) LIKE %:keyword%) AND c.languageCode = :languageCode")
-  List<Announcement> findByKeywordAndLanguageCode(@Param("keyword") String keyword, @Param("languageCode") String languageCode);
-
+  @Query(
+      "SELECT DISTINCT a FROM Announcement a JOIN FETCH a.contents c WHERE (LOWER(c.title) LIKE %:keyword% OR LOWER(c.content) LIKE %:keyword%) AND c.languageCode = :languageCode")
+  List<Announcement> findByKeywordAndLanguageCode(
+      @Param("keyword") String keyword, @Param("languageCode") String languageCode);
 }

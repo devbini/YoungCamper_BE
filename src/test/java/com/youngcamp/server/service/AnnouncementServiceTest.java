@@ -15,7 +15,6 @@ import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.repository.AnnouncementRepository;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,7 +89,8 @@ public class AnnouncementServiceTest {
 
     // when
     NotFoundException result =
-        assertThrows(NotFoundException.class, () -> target.getDetailAnnouncement(announcementId, "ko"));
+        assertThrows(
+            NotFoundException.class, () -> target.getDetailAnnouncement(announcementId, "ko"));
 
     // then
     assertThat(result.getResourceType()).isEqualTo("Announcement");
@@ -121,5 +121,4 @@ public class AnnouncementServiceTest {
 
     return announcement;
   }
-
 }

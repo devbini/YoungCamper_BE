@@ -15,7 +15,7 @@ public class AnnouncementContents {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch=FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "announcement_id", nullable = false)
   private Announcement announcement;
 

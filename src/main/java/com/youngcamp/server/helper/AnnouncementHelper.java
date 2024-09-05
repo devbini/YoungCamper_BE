@@ -12,31 +12,32 @@ public class AnnouncementHelper {
   public static List<AnnouncementResponse.AnnouncementGetResponse> toDto(
       List<Announcement> announcements) {
     return announcements.stream()
-        .map(a -> {
-          AnnouncementContents filteredContent = a.getFilteredContent();
+        .map(
+            a -> {
+              AnnouncementContents filteredContent = a.getFilteredContent();
 
-          // 필터링된 콘텐츠가 null일 경우 기본값을 설정
-          AnnouncementResponse.AnnouncementTrResponse contentResponse =
-              (filteredContent != null)
-                  ? AnnouncementResponse.AnnouncementTrResponse.builder()
-                  .languageCode(filteredContent.getLanguageCode())
-                  .title(filteredContent.getTitle())
-                  .content(filteredContent.getContent())
-                  .build()
-                  : AnnouncementResponse.AnnouncementTrResponse.builder()
-                      .languageCode("unknown")
-                      .title("No title available")
-                      .content("No content available")
-                      .build();
+              // 필터링된 콘텐츠가 null일 경우 기본값을 설정
+              AnnouncementResponse.AnnouncementTrResponse contentResponse =
+                  (filteredContent != null)
+                      ? AnnouncementResponse.AnnouncementTrResponse.builder()
+                          .languageCode(filteredContent.getLanguageCode())
+                          .title(filteredContent.getTitle())
+                          .content(filteredContent.getContent())
+                          .build()
+                      : AnnouncementResponse.AnnouncementTrResponse.builder()
+                          .languageCode("unknown")
+                          .title("No title available")
+                          .content("No content available")
+                          .build();
 
-          return AnnouncementResponse.AnnouncementGetResponse.builder()
-              .id(a.getId())
-              .isPinned(a.getIsPinned())
-              .createdAt(String.valueOf(a.getCreatedAt()))
-              .updatedAt(String.valueOf(a.getUpdatedAt()))
-              .content(contentResponse)
-              .build();
-        })
+              return AnnouncementResponse.AnnouncementGetResponse.builder()
+                  .id(a.getId())
+                  .isPinned(a.getIsPinned())
+                  .createdAt(String.valueOf(a.getCreatedAt()))
+                  .updatedAt(String.valueOf(a.getUpdatedAt()))
+                  .content(contentResponse)
+                  .build();
+            })
         .collect(Collectors.toList());
   }
 
@@ -49,10 +50,10 @@ public class AnnouncementHelper {
     AnnouncementResponse.AnnouncementTrResponse contentResponse =
         (filteredContent != null)
             ? AnnouncementResponse.AnnouncementTrResponse.builder()
-            .languageCode(filteredContent.getLanguageCode())
-            .title(filteredContent.getTitle())
-            .content(filteredContent.getContent())
-            .build()
+                .languageCode(filteredContent.getLanguageCode())
+                .title(filteredContent.getTitle())
+                .content(filteredContent.getContent())
+                .build()
             : AnnouncementResponse.AnnouncementTrResponse.builder()
                 .languageCode("unknown")
                 .title("No title available")
