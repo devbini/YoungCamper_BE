@@ -79,7 +79,11 @@ public class ReviewController {
     reviewDetails.setImageUrls(review.getImageUrls());
 
     Review updatedReview = reviewService.updateReview(id, reviewDetails);
-    return new SuccessResponse<>("리뷰 업데이트 성공", updatedReview);
+    if (updatedReview != null) {
+      return new SuccessResponse<>("리뷰 업데이트 성공", updatedReview);
+    } else {
+      throw new NotFoundException("review", id, "id에 해당하는 리뷰를 찾을 수 없습니다.");
+    }
   }
 
   @DeleteMapping("/{id}")
