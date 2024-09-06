@@ -15,7 +15,6 @@ public class AnnouncementResponse {
   @Setter
   public static class AnnouncementPostResponse {
     private Long id;
-    private String imageUrl;
   }
 
   @Builder
