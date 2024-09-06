@@ -5,7 +5,6 @@ import com.youngcamp.server.domain.Review;
 import com.youngcamp.server.dto.ReviewDTO;
 import com.youngcamp.server.dto.ReviewDTO.DeleteReviewRequest;
 import com.youngcamp.server.exception.NotFoundException;
-import com.youngcamp.server.helper.ReviewHelper;
 import com.youngcamp.server.service.ReviewService;
 import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,12 +39,11 @@ public class ReviewController {
         @Parameter(name = "size", description = "페이지 크기", example = "5"),
         @Parameter(name = "sort", description = "정렬 기준 (예: createdAt)", example = "createdAt,desc")
       })
-  public SuccessResponse<Page<ReviewDTO.Review>> getAllReviews(
+  public SuccessResponse<Page<Review>> getAllReviews(
       @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
     Page<Review> reviews = reviewService.getAllReviews(pageable);
-    Page<ReviewDTO.Review> reviewsDTO = reviews.map(ReviewHelper::toDto);
-    return new SuccessResponse<>("리뷰 조회 성공", reviewsDTO);
+    return new SuccessResponse<>("리뷰 조회 성공", reviews);
   }
 
   @GetMapping("/{sequence}")
@@ -62,17 +60,16 @@ public class ReviewController {
 
   @PostMapping
   @Operation(summary = "리뷰 등록", description = "새 리뷰를 등록합니다.")
-  public SuccessResponse<ReviewDTO.Review> createReview(
+  public SuccessResponse<Review> createReview(
       @RequestBody @Valid @Parameter(description = "등록할 리뷰의 정보")
           ReviewDTO.PostReviewRequest review) {
     Review savedReview = reviewService.createReview(review);
-    ReviewDTO.Review reviewDTO = ReviewHelper.toDto(savedReview);
-    return new SuccessResponse<>("리뷰 등록 성공", reviewDTO);
+    return new SuccessResponse<>("리뷰 등록 성공", savedReview);
   }
 
   @PutMapping("/{id}")
   @Operation(summary = "리뷰 수정", description = "특정 ID의 리뷰를 수정합니다.")
-  public SuccessResponse<ReviewDTO.Review> updateReview(
+  public SuccessResponse<Review> updateReview(
       @Parameter(description = "수정할 리뷰의 ID") @PathVariable UUID id,
       @RequestBody @Valid @Parameter(description = "수정할 리뷰의 정보")
           ReviewDTO.UpdateReviewRequest review) {
@@ -82,8 +79,7 @@ public class ReviewController {
     reviewDetails.setImageUrls(review.getImageUrls());
 
     Review updatedReview = reviewService.updateReview(id, reviewDetails);
-    ReviewDTO.Review reviewDTO = ReviewHelper.toDto(updatedReview);
-    return new SuccessResponse<>("리뷰 업데이트 성공", reviewDTO);
+    return new SuccessResponse<>("리뷰 업데이트 성공", updatedReview);
   }
 
   @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.youngcamp.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.youngcamp.server.service.ReviewService;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -42,6 +43,7 @@ public class Review {
   private String content;
 
   @Column(nullable = false)
+  @JsonIgnore
   private String password;
 
   @ElementCollection(fetch = FetchType.EAGER)
