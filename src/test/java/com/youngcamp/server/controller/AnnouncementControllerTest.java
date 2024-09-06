@@ -189,7 +189,7 @@ public class AnnouncementControllerTest {
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(15))
-        .andExpect(jsonPath("$.data[0].content.title").value("타이틀14")); // 단일 언어 처리
+        .andExpect(jsonPath("$.data[0].title").value("타이틀14")); // 단일 언어 처리
   }
 
   @Test
@@ -227,9 +227,9 @@ public class AnnouncementControllerTest {
             MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.content.languageCode").value("ko"))
-        .andExpect(jsonPath("$.data.content.title").value("타이틀"))
-        .andExpect(jsonPath("$.data.content.content").value("콘텐츠"));
+        .andExpect(jsonPath("$.data.languageCode").value("ko"))
+        .andExpect(jsonPath("$.data.title").value("타이틀"))
+        .andExpect(jsonPath("$.data.content").value("콘텐츠"));
   }
 
   @Test

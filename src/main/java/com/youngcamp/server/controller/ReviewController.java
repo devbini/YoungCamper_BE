@@ -6,7 +6,6 @@ import com.youngcamp.server.dto.ReviewDTO;
 import com.youngcamp.server.dto.ReviewDTO.DeleteReviewRequest;
 import com.youngcamp.server.exception.NotFoundException;
 import com.youngcamp.server.helper.ReviewHelper;
-import com.youngcamp.server.service.AdminChecker;
 import com.youngcamp.server.service.ReviewService;
 import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,11 +26,9 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
   private final ReviewService reviewService;
-  private final AdminChecker adminChecker;
 
-  public ReviewController(ReviewService reviewService, AdminChecker adminChecker) {
+  public ReviewController(ReviewService reviewService) {
     this.reviewService = reviewService;
-    this.adminChecker = adminChecker;
   }
 
   @GetMapping
@@ -86,11 +83,7 @@ public class ReviewController {
 
     Review updatedReview = reviewService.updateReview(id, reviewDetails);
     ReviewDTO.Review reviewDTO = ReviewHelper.toDto(updatedReview);
-    if (updatedReview != null) {
-      return new SuccessResponse<>("리뷰 업데이트 성공", reviewDTO);
-    } else {
-      throw new NotFoundException("review", id, "id에 해당하는 리뷰를 찾을 수 없습니다.");
-    }
+    return new SuccessResponse<>("리뷰 업데이트 성공", reviewDTO);
   }
 
   @DeleteMapping("/{id}")

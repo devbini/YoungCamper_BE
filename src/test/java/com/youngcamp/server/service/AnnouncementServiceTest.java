@@ -85,7 +85,9 @@ public class AnnouncementServiceTest {
   public void 공지사항상세조회실패_존재하지않은글조회시도() {
     // given
     Long announcementId = 1L;
-    doReturn(Optional.empty()).when(announcementRepository).findByIdWithContents(any(Long.class));
+    doReturn(Optional.empty())
+        .when(announcementRepository)
+        .findAnnouncementDetailByIdAndLanguageCode(any(Long.class), any(String.class));
 
     // when
     NotFoundException result =
@@ -93,8 +95,8 @@ public class AnnouncementServiceTest {
             NotFoundException.class, () -> target.getDetailAnnouncement(announcementId, "ko"));
 
     // then
-    assertThat(result.getResourceType()).isEqualTo("Announcement");
-    assertThat(result.getResourceId()).isEqualTo(String.valueOf(announcementId));
+    assertThat(result.getResourceType()).isEqualTo("공지사항");
+    assertThat(result.getResourceId()).isEqualTo(announcementId);
   }
 
   private Announcement announcement() {

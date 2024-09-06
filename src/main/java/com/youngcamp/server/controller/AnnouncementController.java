@@ -1,14 +1,13 @@
 package com.youngcamp.server.controller;
 
 import com.youngcamp.server.annotation.AdminOnly;
-import com.youngcamp.server.domain.Announcement;
+import com.youngcamp.server.dto.AnnouncementDetailProjection;
+import com.youngcamp.server.dto.AnnouncementProjection;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementEditResponse;
-import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementGetResponse;
 import com.youngcamp.server.dto.AnnouncementResponse.AnnouncementPostResponse;
-import com.youngcamp.server.helper.AnnouncementHelper;
 import com.youngcamp.server.service.AnnouncementService;
 import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,11 +54,11 @@ public class AnnouncementController {
 
   @Operation(summary = "공지사항 목록 조회/검색 API", description = "공지사항 목록을 조회하거나 키워드를 사용해 검색합니다.")
   @GetMapping
-  public SuccessResponse<List<AnnouncementGetResponse>> getAnnouncements(
+  public SuccessResponse<List<AnnouncementProjection>> getAnnouncements(
       @RequestParam(name = "keyword", required = false) String keyword,
       @RequestHeader(value = "Accept-Language", defaultValue = "ko") String languageCode) {
 
-    List<Announcement> announcements;
+    List<AnnouncementProjection> announcements;
 
     if (keyword != null && !keyword.isEmpty()) {
       // 키워드가 있을 때 검색 처리
@@ -69,7 +68,7 @@ public class AnnouncementController {
       announcements = announcementService.getAnnouncements(languageCode);
     }
 
-    return new SuccessResponse<>("공지사항 조회 성공", AnnouncementHelper.toDto(announcements));
+    return new SuccessResponse<>("공지사항 조회 성공", announcements);
   }
 
   @Operation(summary = "공지사항 상세 조회 API", description = "공지사항 ID값으로 특정 공지 사항 내용을 조회합니다.")
@@ -77,8 +76,8 @@ public class AnnouncementController {
   public SuccessResponse<?> getDetailAnnouncement(
       @PathVariable(name = "announcementId") Long announcementId,
       @RequestHeader(value = "Accept-Language", defaultValue = "ko") String languageCode) {
-    Announcement detailAnnouncement =
+    AnnouncementDetailProjection detailAnnouncement =
         announcementService.getDetailAnnouncement(announcementId, languageCode);
-    return new SuccessResponse<>("공지사항 상세 조회 성공", AnnouncementHelper.toDto(detailAnnouncement));
+    return new SuccessResponse<>("공지사항 상세 조회 성공", detailAnnouncement);
   }
 }

@@ -30,8 +30,7 @@ public class XSSCharacterEscapes extends CharacterEscapes {
   public SerializableString getEscapeSequence(int ch) {
     char charAt = (char) ch;
     if (Character.isHighSurrogate(charAt) || Character.isLowSurrogate(charAt)) {
-      String sb = "\\u"
-          + String.format("%04x", ch);
+      String sb = "\\u" + String.format("%04x", ch);
       return new SerializedString(sb);
     } else {
       return new SerializedString(StringEscapeUtils.escapeHtml4(Character.toString(charAt)));

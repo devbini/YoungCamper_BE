@@ -38,7 +38,7 @@ public class AnnouncementResponse {
     private Boolean isPinned;
     private String createdAt;
     private String updatedAt;
-    private AnnouncementTrResponse content; // 단일 언어 콘텐츠
+    private AnnouncementTrResponse content;
   }
 
   // 상세 조회용 DTO - 단일 언어 콘텐츠 포함
@@ -51,7 +51,9 @@ public class AnnouncementResponse {
     private Boolean isPinned;
     private String createdAt;
     private String updatedAt;
-    private AnnouncementTrResponse content; // 단일 언어 콘텐츠
+    private String languageCode;
+    private String title;
+    private String content;
   }
 
   @Getter

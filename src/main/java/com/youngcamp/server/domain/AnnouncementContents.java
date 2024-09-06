@@ -1,5 +1,6 @@
 package com.youngcamp.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class AnnouncementContents {
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "announcement_id", nullable = false)
+  @JsonIgnore
   private Announcement announcement;
 
   @Column(nullable = false)

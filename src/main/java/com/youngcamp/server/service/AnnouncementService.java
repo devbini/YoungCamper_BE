@@ -2,6 +2,8 @@ package com.youngcamp.server.service;
 
 import com.youngcamp.server.domain.Announcement;
 import com.youngcamp.server.domain.AnnouncementContents;
+import com.youngcamp.server.dto.AnnouncementDetailProjection;
+import com.youngcamp.server.dto.AnnouncementProjection;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementDeleteRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementEditRequest;
 import com.youngcamp.server.dto.AnnouncementRequest.AnnouncementPostRequest;
@@ -74,46 +76,18 @@ public class AnnouncementService {
   }
 
   @Transactional
-  public List<Announcement> getAnnouncements(String languageCode) {
-    // 공지사항을 불러오고, 언어 코드에 따라 필터링
-    List<Announcement> announcements = announcementRepository.findAllByOrderByCreatedAtDesc();
-    announcements.forEach(announcement -> filterContentByLanguage(announcement, languageCode));
-    System.out.println(announcements);
-    return announcements;
+  public List<AnnouncementProjection> getAnnouncements(String languageCode) {
+    return announcementRepository.findAllByLanguageCodeOrderByCreatedAtDesc(languageCode);
   }
 
   @Transactional
-  public Announcement getDetailAnnouncement(Long announcementId, String languageCode) {
-    Announcement announcement =
+  public AnnouncementDetailProjection getDetailAnnouncement(
+      Long announcementId, String languageCode) {
+    AnnouncementDetailProjection announcementDetail =
         announcementRepository
-            .findByIdWithContents(announcementId)
-            .orElseThrow(
-                () ->
-                    new NotFoundException(
-                        "Announcement",
-                        String.valueOf(announcementId),
-                        "Resource with the specified ID was not found"));
-    filterContentByLanguage(announcement, languageCode);
-    return announcement;
-  }
-
-  private void filterContentByLanguage(Announcement announcement, String languageCode) {
-    // 언어에 따른 콘텐츠 필터링, 기본값은 한국어로 설정
-    AnnouncementContents translatedContent =
-        announcement.getContents().stream()
-            .filter(content -> content.getLanguageCode().equals(languageCode))
-            .findFirst()
-            .orElseGet(() -> getDefaultLanguageContent(announcement)); // 기본값 한국어
-
-    announcement.setFilteredContent(translatedContent); // 필터링된 콘텐츠 저장
-  }
-
-  private AnnouncementContents getDefaultLanguageContent(Announcement announcement) {
-    // 한국어 콘텐츠가 없으면 첫 번째로 등록된 콘텐츠 반환
-    return announcement.getContents().stream()
-        .filter(content -> content.getLanguageCode().equals("ko"))
-        .findFirst()
-        .orElse(announcement.getContents().get(0)); // 첫 번째 콘텐츠 반환
+            .findAnnouncementDetailByIdAndLanguageCode(announcementId, languageCode)
+            .orElseThrow(() -> new NotFoundException("공지사항", announcementId, "찾을 수 없는 공지사항 입니다."));
+    return announcementDetail;
   }
 
   @Transactional
@@ -186,7 +160,7 @@ public class AnnouncementService {
   }
 
   @Transactional
-  public List<Announcement> searchAnnouncements(String keyword, String languageCode) {
-    return announcementRepository.findByKeywordAndLanguageCode(keyword, languageCode);
+  public List<AnnouncementProjection> searchAnnouncements(String keyword, String languageCode) {
+    return announcementRepository.findAllByKeywordAndLanguageCode(keyword, languageCode);
   }
 }
