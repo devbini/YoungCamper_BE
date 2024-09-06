@@ -13,10 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
-  @Modifying
-  @Transactional
-  @Query("DELETE FROM Announcement a WHERE a.id IN :ids")
-  void deleteAllByIds(@Param("ids") List<Long> ids);
+  void deleteAllById(Iterable<? extends Long> ids);
+
 
   @Query("SELECT a.id FROM Announcement a WHERE a.id IN :ids")
   List<Long> findExistingIds(@Param("ids") List<Long> ids);

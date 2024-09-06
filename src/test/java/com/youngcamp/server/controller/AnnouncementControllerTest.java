@@ -128,6 +128,7 @@ public class AnnouncementControllerTest {
 
     List<Announcement> savedAnnouncements = announcementRepository.saveAll(announcements);
 
+    System.out.println(savedAnnouncements);
     List<Long> ids =
         savedAnnouncements.stream().map(Announcement::getId).collect(Collectors.toList());
     AnnouncementDeleteRequest request = AnnouncementDeleteRequest.builder().ids(ids).build();
@@ -143,6 +144,7 @@ public class AnnouncementControllerTest {
 
     // 삭제 확인
     List<Announcement> remainingAnnouncements = announcementRepository.findAll();
+    System.out.println(remainingAnnouncements);
     assertThat(remainingAnnouncements).isEmpty();
   }
 

@@ -59,7 +59,7 @@ public class AnnouncementService {
   @Transactional
   public void deleteAnnouncement(AnnouncementDeleteRequest request) {
     existIdValidation(request.getIds());
-    announcementRepository.deleteAllByIds(request.getIds());
+    announcementRepository.deleteAllById(request.getIds());
   }
 
   private void existIdValidation(List<Long> ids) {

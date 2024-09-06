@@ -118,7 +118,7 @@ public class AnnouncementRepositoryTest {
         savedAnnouncements.stream().map(Announcement::getId).collect(Collectors.toList());
 
     // when
-    announcementRepository.deleteAllByIds(requestIds);
+    announcementRepository.deleteAllById(requestIds);
     List<Announcement> result = announcementRepository.findAllById(requestIds);
 
     // then
