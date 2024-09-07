@@ -12,6 +12,7 @@ import com.youngcamp.server.service.AnnouncementService;
 import com.youngcamp.server.utils.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +57,8 @@ public class AnnouncementController {
   @GetMapping
   public SuccessResponse<List<AnnouncementProjection>> getAnnouncements(
       @RequestParam(name = "keyword", required = false) String keyword,
-      @RequestHeader(value = "Accept-Language", defaultValue = "ko") String languageCode) {
-
+      HttpServletRequest request) {
+    String languageCode = request.getLocale().getLanguage();
     List<AnnouncementProjection> announcements;
 
     if (keyword != null && !keyword.isEmpty()) {
@@ -74,8 +75,8 @@ public class AnnouncementController {
   @Operation(summary = "공지사항 상세 조회 API", description = "공지사항 ID값으로 특정 공지 사항 내용을 조회합니다.")
   @GetMapping("/{announcementId}")
   public SuccessResponse<?> getDetailAnnouncement(
-      @PathVariable(name = "announcementId") Long announcementId,
-      @RequestHeader(value = "Accept-Language", defaultValue = "ko") String languageCode) {
+      @PathVariable(name = "announcementId") Long announcementId, HttpServletRequest request) {
+    String languageCode = request.getLocale().getLanguage();
     AnnouncementDetailProjection detailAnnouncement =
         announcementService.getDetailAnnouncement(announcementId, languageCode);
     return new SuccessResponse<>("공지사항 상세 조회 성공", detailAnnouncement);
