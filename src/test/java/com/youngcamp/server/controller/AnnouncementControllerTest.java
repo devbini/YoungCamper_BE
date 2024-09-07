@@ -183,13 +183,27 @@ public class AnnouncementControllerTest {
 
     announcementRepository.saveAll(announcements);
 
-    // expected
+    // expected (한국어로 요청)
     mockMvc
-        .perform(MockMvcRequestBuilders.get(url).contentType(MediaType.APPLICATION_JSON))
+        .perform(
+            MockMvcRequestBuilders.get(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Accept-Language", "ko")) // 한국어로 요청
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(15))
         .andExpect(jsonPath("$.data[0].title").value("타이틀14")); // 단일 언어 처리
+
+    // expected (영어로 요청)
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Accept-Language", "en")) // 영어로 요청
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.length()").value(15))
+        .andExpect(jsonPath("$.data[0].title").value("Etitle14")); // 영어로 타이틀 확인
   }
 
   @Test
@@ -221,15 +235,28 @@ public class AnnouncementControllerTest {
     Announcement savedAnnouncement = announcementRepository.save(announcement);
 
     Hibernate.initialize(savedAnnouncement.getContents());
-    // when and then
+
+    // 한국어로 요청
     mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Accept-Language", "ko")) // 한국어로 요청
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.languageCode").value("ko"))
         .andExpect(jsonPath("$.data.title").value("타이틀"))
         .andExpect(jsonPath("$.data.content").value("콘텐츠"));
+
+    // 영어로 요청
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, savedAnnouncement.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Accept-Language", "en")) // 영어로 요청
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.languageCode").value("en"))
+        .andExpect(jsonPath("$.data.title").value("Etitle"))
+        .andExpect(jsonPath("$.data.content").value("Econtent"));
   }
 
   @Test
