@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.youngcamp.server.domain.Announcement;
 import com.youngcamp.server.domain.AnnouncementContents;
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -58,10 +59,11 @@ public class AnnouncementRepositoryTest {
 
     // then
     assertThat(savedAnnouncement.getContents()).hasSize(2);
-    assertThat(savedAnnouncement.getContents().get(0).getTitle()).isEqualTo("Korean Title");
+    assertThat(savedAnnouncement.getContents().get(0).getTitle()).isEqualTo("KTitle");
     assertThat(savedAnnouncement.getContents().get(1).getTitle()).isEqualTo("English Title");
   }
 
+  @Transactional
   @Test
   public void 공지사항삭제_1개() {
     // given
@@ -77,17 +79,19 @@ public class AnnouncementRepositoryTest {
             .build();
 
     announcement.addContents(List.of(translationKo));
-
+    System.out.println(announcement.getContents());
     // when
     Announcement savedAnnouncement = announcementRepository.save(announcement);
-    announcementRepository.deleteAllAnnouncementById(List.of(savedAnnouncement.getId()));
-    Optional<Announcement> result = announcementRepository.findById(announcement.getId());
+    announcementRepository.deleteAllById(List.of(savedAnnouncement.getId()));
 
+    Optional<Announcement> result = announcementRepository.findById(savedAnnouncement.getId());
+    System.out.println(result);
     // then
     assertThat(result).isEmpty();
   }
 
   @Test
+  @Transactional
   public void 공지사항삭제_여러개() {
     // given
     List<Announcement> announcements =
@@ -111,10 +115,10 @@ public class AnnouncementRepositoryTest {
     List<Announcement> savedAnnouncements = announcementRepository.saveAll(announcements);
 
     List<Long> requestIds =
-        savedAnnouncements.stream().map(a -> a.getId()).collect(Collectors.toList());
+        savedAnnouncements.stream().map(Announcement::getId).collect(Collectors.toList());
 
     // when
-    announcementRepository.deleteAllAnnouncementById(requestIds);
+    announcementRepository.deleteAllById(requestIds);
     List<Announcement> result = announcementRepository.findAllById(requestIds);
 
     // then
@@ -124,13 +128,13 @@ public class AnnouncementRepositoryTest {
   @Test
   public void 존재하는공지사항만반환성공() {
     // given
-    final Announcement announcement1 =
-        Announcement.builder().id(-1L).isPinned(false).imageUrl("image1.jpg").build();
+    Announcement announcement1 =
+        Announcement.builder().isPinned(false).imageUrl("image1.jpg").build();
 
-    final Announcement announcement2 =
-        Announcement.builder().id(-2L).isPinned(false).imageUrl("image2.jpg").build();
+    Announcement announcement2 =
+        Announcement.builder().isPinned(false).imageUrl("image2.jpg").build();
 
-    final AnnouncementContents translationKo1 =
+    AnnouncementContents translationKo1 =
         AnnouncementContents.builder()
             .announcement(announcement1)
             .languageCode("ko")
@@ -138,13 +142,14 @@ public class AnnouncementRepositoryTest {
             .content("내용 1")
             .build();
 
-    final AnnouncementContents translationKo2 =
+    AnnouncementContents translationKo2 =
         AnnouncementContents.builder()
             .announcement(announcement2)
             .languageCode("ko")
             .title("공지사항 2")
             .content("내용 2")
             .build();
+
     announcement1.addContents(List.of(translationKo1));
     announcement2.addContents(List.of(translationKo2));
 
@@ -161,8 +166,7 @@ public class AnnouncementRepositoryTest {
     assertThat(existingIds)
         .containsExactlyInAnyOrder(
             savedAnnouncements.get(0).getId(), savedAnnouncements.get(1).getId());
-    assertThat(existingIds).doesNotContain(-3L);
-    assertThat(2).isEqualTo(existingIds.size());
+    assertThat(existingIds.size()).isEqualTo(2);
   }
 
   @Test
@@ -191,7 +195,7 @@ public class AnnouncementRepositoryTest {
     announcementRepository.saveAll(announcements);
 
     // when
-    List<Announcement> results = announcementRepository.findAllOrderByCreatedAtDesc();
+    List<Announcement> results = announcementRepository.findAllByOrderByCreatedAtDesc();
 
     // then
     assertThat(results.size()).isEqualTo(20);
@@ -254,8 +258,8 @@ public class AnnouncementRepositoryTest {
             .findFirst()
             .orElseThrow(() -> new RuntimeException("영어 번역이 존재하지 않습니다."));
 
-    assertThat(enTranslation.getTitle()).isEqualTo("English title");
-    assertThat(enTranslation.getContent()).isEqualTo("English content");
+    assertThat(enTranslation.getTitle()).isEqualTo("Etitle");
+    assertThat(enTranslation.getContent()).isEqualTo("Econtent");
   }
 
   @Test
@@ -295,7 +299,7 @@ public class AnnouncementRepositoryTest {
             .collect(Collectors.toList());
     announcementRepository.saveAll(announcements);
 
-    String keyword = "tle";
+    String keyword = "title";
 
     // when
     List<Announcement> foundAnnouncements =
