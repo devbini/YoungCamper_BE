@@ -39,7 +39,7 @@ public class Review {
   @Column(nullable = false, unique = true)
   private Integer sequence;
 
-  @Column(nullable = false)
+  @Column(nullable = false, length = 500)
   private String content;
 
   @Column(nullable = false)
