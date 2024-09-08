@@ -1,6 +1,7 @@
 package com.youngcamp.server.controller;
 
 import com.youngcamp.server.annotation.AdminOnly;
+import com.youngcamp.server.annotation.DdosProtected;
 import com.youngcamp.server.domain.Review;
 import com.youngcamp.server.dto.ReviewDTO;
 import com.youngcamp.server.dto.ReviewDTO.DeleteReviewRequest;
@@ -60,6 +61,7 @@ public class ReviewController {
 
   @PostMapping
   @Operation(summary = "리뷰 등록", description = "새 리뷰를 등록합니다.")
+  @DdosProtected
   public SuccessResponse<Review> createReview(
       @RequestBody @Valid @Parameter(description = "등록할 리뷰의 정보")
           ReviewDTO.PostReviewRequest review) {
@@ -69,6 +71,7 @@ public class ReviewController {
 
   @PutMapping("/{id}")
   @Operation(summary = "리뷰 수정", description = "특정 ID의 리뷰를 수정합니다.")
+  @DdosProtected
   public SuccessResponse<Review> updateReview(
       @Parameter(description = "수정할 리뷰의 ID") @PathVariable UUID id,
       @RequestBody @Valid @Parameter(description = "수정할 리뷰의 정보")
