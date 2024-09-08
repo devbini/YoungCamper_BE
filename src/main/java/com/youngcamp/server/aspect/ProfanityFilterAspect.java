@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class ProfanityFilterAspect {
 
   private final BadWordFiltering badWordFiltering = new BadWordFiltering();
-  private final Map<String, Pattern> cachedPatterns = new HashMap<>(); // 캐싱을 위한 맵
+  private final Map<String, Pattern> cachedPatterns = new HashMap<>();
 
   @Before("execution(* com.youngcamp..*(..))")
   public void checkProfanity(JoinPoint joinPoint) throws IllegalAccessException {
@@ -39,14 +39,23 @@ public class ProfanityFilterAspect {
 
           String fieldValue = (String) value;
 
-          if (badWordFiltering.contains(fieldValue)) {
+          if (badWordFiltering.blankCheck(fieldValue)) { // check() 메서드로 변경
             throw new IllegalArgumentException("비속어가 포함되어 있습니다.");
           }
 
-          Pattern pattern =
-              cachedPatterns.computeIfAbsent(fieldValue, this::generateProfanityPattern); // 패턴 캐싱
-          if (pattern.matcher(fieldValue).find()) {
-            throw new IllegalArgumentException("정규식에 의해 비속어가 감지되었습니다.");
+          for (String badWord : badWordFiltering) {
+            Pattern pattern = cachedPatterns.get(badWord);
+
+            // 캐싱된 패턴이 없거나 유효하지 않으면 새로 생성
+            if (pattern == null || !pattern.matcher(badWord).matches()) {
+              pattern = generateProfanityPattern(badWord);
+              cachedPatterns.put(badWord, pattern); // 캐시에 업데이트
+            }
+
+            // 필터링 로직
+            if (pattern.matcher(fieldValue).find()) {
+              throw new IllegalArgumentException("변형된 비속어가 감지되었습니다: " + badWord);
+            }
           }
         }
       }
@@ -55,9 +64,10 @@ public class ProfanityFilterAspect {
 
   private Pattern generateProfanityPattern(String word) {
     String patternString =
-        word.replaceAll("([a-zA-Z가-힣])", "$1[^a-zA-Z가-힣0-9]*\\s*") // 문자 사이에 숫자나 기호 허용
-            .replaceAll("([.,!?])", "\\\\$1") // 특수 문자 escape 처리
-            .replaceAll("\\s+", "\\\\s*"); // 공백 허용
+        word.replaceAll("([a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ\\p{Punct}])", "$1[^a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ\\p{Punct}]*")
+            .replaceAll("\\s+", "\\s*")
+            .replaceAll("%", "[%]*");
+
     return Pattern.compile(patternString, Pattern.CASE_INSENSITIVE);
   }
 }
