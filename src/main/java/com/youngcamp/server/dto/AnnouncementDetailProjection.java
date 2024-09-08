@@ -9,6 +9,7 @@ import lombok.Setter;
 public class AnnouncementDetailProjection {
   private Long announcementId;
   private Boolean isPinned;
+  private String imageUrl;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String languageCode;
@@ -18,6 +19,7 @@ public class AnnouncementDetailProjection {
   public AnnouncementDetailProjection(
       Long announcementId,
       Boolean isPinned,
+      String imageUrl,
       LocalDateTime createdAt,
       LocalDateTime updatedAt,
       String languageCode,
@@ -25,6 +27,7 @@ public class AnnouncementDetailProjection {
       String content) {
     this.announcementId = announcementId;
     this.isPinned = isPinned;
+    this.imageUrl = imageUrl;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.languageCode = languageCode;

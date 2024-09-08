@@ -62,7 +62,8 @@ public class SecurityConfig {
                     .logoutUrl("/api/admin/logout")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
-                    .deleteCookies("JSESSIONID", "ADMINID"))
+                    .deleteCookies("JSESSIONID", "ADMINID")
+                    .logoutSuccessUrl("/"))
         .sessionManagement(
             sessionManagement -> {
               sessionManagement.maximumSessions(1).maxSessionsPreventsLogin(false);

@@ -27,7 +27,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
       @Param("languageCode") String languageCode);
 
   @Query(
-      "SELECT new com.youngcamp.server.dto.AnnouncementDetailProjection(a.id, a.isPinned, a.createdAt, a.updatedAt, c.languageCode, c.title, c.content) "
+      "SELECT new com.youngcamp.server.dto.AnnouncementDetailProjection(a.id, a.isPinned, a.imageUrl, a.createdAt, a.updatedAt, c.languageCode, c.title, c.content) "
           + "FROM Announcement a LEFT JOIN a.contents c WHERE a.id = :id AND c.languageCode = :languageCode")
   Optional<AnnouncementDetailProjection> findAnnouncementDetailByIdAndLanguageCode(
       @Param("id") Long id, @Param("languageCode") String languageCode);
