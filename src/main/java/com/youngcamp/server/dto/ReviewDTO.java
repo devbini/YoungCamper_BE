@@ -1,5 +1,6 @@
 package com.youngcamp.server.dto;
 
+import com.youngcamp.server.annotation.ProfanityCheck;
 import com.youngcamp.server.validation.ImageUrlPrefix;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -42,7 +43,8 @@ public class ReviewDTO {
     private String password;
 
     @NotBlank(message = "Content cannot be blank")
-    @Size(min = 10, max=500)
+    @Size(min = 10, max = 500)
+    @ProfanityCheck
     private String content;
 
     @ImageUrlPrefix private List<String> imageUrls;
@@ -56,6 +58,7 @@ public class ReviewDTO {
 
     @NotBlank(message = "Content cannot be blank")
     @Size(min = 10, max = 500)
+    @ProfanityCheck
     private String content;
 
     @ImageUrlPrefix private List<String> imageUrls;
