@@ -30,8 +30,6 @@ public class ProfanityFilterAspect {
           field.setAccessible(true);
           Object value = field.get(arg);
 
-          System.out.println(field);
-          System.out.println(value);
           if (value == null || !(value instanceof String)) {
             continue;
           }
@@ -39,14 +37,12 @@ public class ProfanityFilterAspect {
           String fieldValue = (String) value;
 
           if (badWordFiltering.contains(fieldValue)) {
-            System.out.println("라이브러리에서 걸림");
             throw new IllegalArgumentException("비속어가 포함되어 있습니다.");
           }
 
           Pattern pattern =
               Pattern.compile(generateProfanityPattern(fieldValue), Pattern.CASE_INSENSITIVE);
           if (pattern.matcher(fieldValue).find()) {
-            System.out.println("정규식에 의해 걸림!!");
             throw new IllegalArgumentException("정규식에 의해 비속어가 감지되었습니다.");
           }
         }
